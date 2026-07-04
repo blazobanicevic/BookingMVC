@@ -14,9 +14,39 @@ namespace BookingMVC.Controllers
         }
 
         [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Register(int idUloga, string ime, string prezime, string email, string lozinka)
+        {
+            if (_context.Korisnici.Any(k => k.Email == email))
+            {
+                ViewBag.Error = "Email je već registrovan.";
+                return View();
+            }
+
+            var korisnik = new Models.Korisnik
+            {
+                IdUloga = idUloga,
+                Ime = ime,
+                Prezime = prezime,
+                Email = email,
+                Lozinka = lozinka,
+            };
+
+            _context.Korisnici.Add(korisnik);
+            _context.SaveChanges();
+
+            return RedirectToAction("Login");
         }
 
         [HttpPost]
