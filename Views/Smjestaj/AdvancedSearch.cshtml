@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Detaljna pretraga";
+}
+
+<div class="card shadow-sm p-4" style="max-width: 330px;">
+    <h4 class="mb-4">Filtriraj smještaje</h4>
+
+    <form asp-controller="Smjestaj" asp-action="AdvancedSearchResults" method="get">
+
+        <div class="mb-3">
+            <label class="form-label">Grad</label>
+            <input class="form-control" type="text" name="grad" placeholder="Unesi grad" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Tip smještaja</label>
+            <select class="form-select" name="idTip">
+                <option value="">Svi tipovi</option>
+                @foreach (var tip in ViewBag.Tipovi)
+                {
+                    <option value="@tip.IdTipSmjestaja">@tip.Naziv</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Broj osoba</label>
+            <input class="form-control" type="number" name="brojOsoba" min="1" placeholder="Broj osoba" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Datum prijave</label>
+            <input class="form-control" type="date" name="datumPrijave" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Datum odjave</label>
+            <input class="form-control" type="date" name="datumOdjave" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Minimalna cijena: <span id="minValue">0</span> €</label>
+            <input class="form-range" type="range" name="minCijena" min="0" max="1000" value="0"
+                   oninput="document.getElementById('minValue').innerText = this.value" />
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Maksimalna cijena: <span id="maxValue">1000</span> €</label>
+            <input class="form-range" type="range" name="maxCijena" min="0" max="1000" value="1000"
+                   oninput="document.getElementById('maxValue').innerText = this.value" />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+            Primijeni filtere
+        </button>
+    </form>
+
+    <a asp-controller="Smjestaj" asp-action="AdvancedSearch" class="btn btn-link mt-3">
+        Očisti sve
+    </a>
+</div>

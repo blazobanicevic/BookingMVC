@@ -16,21 +16,26 @@ else
         @foreach (var smjestaj in Model)
         {
             <div class="col-md-4 mb-3">
-                <div class="card p-3">
-                    <h4>@smjestaj.Naziv</h4>
-                    <p>@smjestaj.Opis</p>
-                    <p><strong>Grad:</strong> @smjestaj.Grad.Naziv</p>
-                    <p><strong>Adresa:</strong> @smjestaj.Adresa</p>
-                    <p><strong>Tip:</strong> @smjestaj.TipSmjestaja.Naziv</p>
-                    <p><strong>Broj osoba:</strong> @smjestaj.BrojOsoba</p>
-                    <p><strong>Cijena:</strong> @smjestaj.CijenaPoNoci € / noć</p>
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h4>@smjestaj.Naziv</h4>
+                        <p class="description">
+                            <strong>Opis:</strong>
+                            @(string.IsNullOrWhiteSpace(smjestaj.Opis) ? "-" : smjestaj.Opis)
+                        </p>
+                        <p><strong>Grad:</strong> @smjestaj.Grad.Naziv</p>
+                        <p><strong>Adresa:</strong> @smjestaj.Adresa</p>
+                        <p><strong>Tip:</strong> @smjestaj.TipSmjestaja.Naziv</p>
+                        <p><strong>Broj osoba:</strong> @smjestaj.BrojOsoba</p>
+                        <p><strong>Cijena:</strong> @smjestaj.CijenaPoNoci € / noć</p>
 
-                    <a asp-controller="Smjestaj"
-                       asp-action="Details"
-                       asp-route-id="@smjestaj.IdSmjestaj"
-                       class="btn btn-primary">
-                        Detalji
-                    </a>
+                        <a asp-controller="Smjestaj"
+                           asp-action="Details"
+                           asp-route-id="@smjestaj.IdSmjestaj"
+                           class="btn btn-primary">
+                            Detalji
+                        </a>
+                    </div>
                 </div>
             </div>
         }

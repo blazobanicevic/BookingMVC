@@ -20,10 +20,13 @@ namespace BookingMVC.Controllers
                 return RedirectToAction("UserDashboard", "Home");
             }
 
+            int idAdmin = HttpContext.Session.GetInt32("IdKorisnik").Value;
+
             var smjestaji = _context.Smjestaji
                 .Include(s => s.Grad)
                 .Include(s => s.TipSmjestaja)
                 .Include(s => s.Admin)
+                .Where(s => s.IdAdmin == idAdmin)
                 .ToList();
 
             return View(smjestaji);
@@ -165,6 +168,51 @@ namespace BookingMVC.Controllers
             var smjestaji = query.ToList();
 
             return View(smjestaji);
+        }
+
+        [HttpGet]
+        public IActionResult AdvancedSearch()
+        {
+            ViewBag.Tipovi = _context.TipoviSmjestaja.ToList();
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult AdvancedSearchResults(string grad, int? idTip, int? brojOsoba, decimal? minCijena, decimal? maxCijena, DateTime? datumPrijave, DateTime? datumOdjave)
+        {
+            var query = _context.Smjestaji
+                .Include(s => s.Grad)
+                .Include(s => s.TipSmjestaja)
+                .Include(s => s.Admin)
+                .Where(s => s.Aktivan)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(grad))
+            {
+                query = query.Where(s => s.Grad.Naziv.Contains(grad));
+            }
+
+            if (idTip.HasValue)
+            {
+                query = query.Where(s => s.IdTip == idTip.Value);
+            }
+
+            if (brojOsoba.HasValue)
+            {
+                query = query.Where(s => s.BrojOsoba >= brojOsoba.Value);
+            }
+
+            if (minCijena.HasValue)
+            {
+                query = query.Where(s => s.CijenaPoNoci >= minCijena.Value);
+            }
+
+            if (maxCijena.HasValue)
+            {
+                query = query.Where(s => s.CijenaPoNoci <= maxCijena.Value);
+            }
+
+            return View("Search", query.ToList());
         }
     }
 }
