@@ -32,6 +32,7 @@ namespace BookingMVC.Models
         public int BrojOsoba { get; set; }
 
         [Required]
+        [Column(TypeName = "decimal(10,2)")]
         public decimal CijenaPoNoci { get; set; }
 
         [Required]

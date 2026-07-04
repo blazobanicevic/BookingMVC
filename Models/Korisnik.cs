@@ -9,6 +9,9 @@ namespace BookingMVC.Models
         public int IdKorisnik { get; set; }
 
         [Required]
+        public int IdUloga { get; set; }
+
+        [Required]
         [StringLength(50)]
         public string Ime { get; set; }
 
@@ -23,9 +26,6 @@ namespace BookingMVC.Models
         [Required]
         [StringLength(255)]
         public string Lozinka { get; set; }
-
-        [Required]
-        public int IdUloga { get; set; }
 
         [ForeignKey("IdUloga")]
         public Uloga Uloga { get; set; }
