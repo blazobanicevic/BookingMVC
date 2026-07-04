@@ -1,0 +1,49 @@
+﻿@model BookingMVC.Models.Smjestaj
+
+@{
+    ViewData["Title"] = "Detalji smještaja";
+    var uloga = Context.Session.GetString("Uloga");
+    bool uListiZelja = (bool)(ViewBag.UListiZelja ?? false);
+}
+
+<h2>@Model.Naziv</h2>
+
+<p><strong>Opis:</strong> @(string.IsNullOrWhiteSpace(Model.Opis) ? "-" : Model.Opis)</p>
+<p><strong>Grad:</strong> @Model.Grad.Naziv</p>
+<p><strong>Adresa:</strong> @Model.Adresa</p>
+<p><strong>Tip:</strong> @Model.TipSmjestaja.Naziv</p>
+<p><strong>Broj osoba:</strong> @Model.BrojOsoba</p>
+<p><strong>Cijena:</strong> @Model.CijenaPoNoci € / noć</p>
+<p><strong>Izdavalac:</strong> @Model.Admin.Ime @Model.Admin.Prezime</p>
+
+@if (uloga == "Korisnik")
+{
+    <hr />
+
+    @if (uListiZelja)
+    {
+        <a asp-controller="ListaZelja"
+           asp-action="Toggle"
+           asp-route-idSmjestaj="@Model.IdSmjestaj"
+           class="btn btn-danger">
+            Ukloni iz liste želja
+        </a>
+    }
+    else
+    {
+        <a asp-controller="ListaZelja"
+           asp-action="Toggle"
+           asp-route-idSmjestaj="@Model.IdSmjestaj"
+           class="btn btn-outline-danger">
+            Dodaj u listu želja
+        </a>
+    }
+
+    <a href="#" class="btn btn-primary">
+        Rezerviši
+    </a>
+
+    <a href="#" class="btn btn-outline-secondary">
+        Pošalji poruku izdavaocu
+    </a>
+}

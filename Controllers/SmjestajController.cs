@@ -214,5 +214,31 @@ namespace BookingMVC.Controllers
 
             return View("Search", query.ToList());
         }
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var smjestaj = _context.Smjestaji
+                .Include(s => s.Grad)
+                .Include(s => s.TipSmjestaja)
+                .Include(s => s.Admin)
+                .FirstOrDefault(s => s.IdSmjestaj == id && s.Aktivan);
+
+            if (smjestaj == null)
+            {
+                return NotFound();
+            }
+
+            if (HttpContext.Session.GetString("Uloga") == "Korisnik")
+            {
+                int idKorisnik = HttpContext.Session.GetInt32("IdKorisnik").Value;
+
+                ViewBag.UListiZelja = _context.ListaZelja.Any(lz =>
+                    lz.IdKorisnik == idKorisnik &&
+                    lz.IdSmjestaj == id);
+            }
+
+            return View(smjestaj);
+        }
     }
 }

@@ -1,0 +1,47 @@
+﻿@model List<BookingMVC.Models.ListaZelja>
+
+@{
+    ViewData["Title"] = "Lista želja";
+}
+
+<h2>Moja lista želja</h2>
+
+@if (!Model.Any())
+{
+    <p>Nemate nijedan smještaj u listi želja.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var stavka in Model)
+        {
+            <div class="col-md-4 mb-3">
+
+                <div class="card h-100">
+
+                    <div class="card-body">
+
+                        <h4>@stavka.Smjestaj.Naziv</h4>
+
+                        <p class="description">
+                            <strong>Opis:</strong>
+                            @(string.IsNullOrWhiteSpace(stavka.Smjestaj.Opis) ? "-" : stavka.Smjestaj.Opis)
+                        </p>
+                        <p><strong>Grad:</strong> @stavka.Smjestaj.Grad.Naziv</p>
+                        <p><strong>Adresa:</strong> @stavka.Smjestaj.Adresa</p>
+                        <p><strong>Tip:</strong> @stavka.Smjestaj.TipSmjestaja.Naziv</p>
+                        <p><strong>Broj osoba:</strong> @stavka.Smjestaj.BrojOsoba</p>
+                        <p><strong>Cijena:</strong> @stavka.Smjestaj.CijenaPoNoci € / noć</p>
+
+                        <a asp-controller="Smjestaj" asp-action="Details" asp-route-id="@stavka.Smjestaj.IdSmjestaj" class="btn btn-primary"> Detalji</a>
+
+                        <a asp-action="Remove" asp-route-id="@stavka.IdListaZelja" class="btn btn-danger"> Ukloni</a>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+    </div>
+}
