@@ -138,9 +138,88 @@
             &copy; 2026 - BookingMVC
         </div>
     </footer>
+
+    @if (Context.Session.GetInt32("IdKorisnik") != null)
+    {
+        <button id="messagesButton" class="messages-button">Poruke</button>
+
+        <div id="messagesPanel" class="messages-panel d-none">
+            <div class="messages-header">
+                <strong>Poruke</strong>
+                <button type="button" id="closeMessages" class="btn btn-sm btn-light">Zatvori</button>
+            </div>
+
+            <div class="messages-body">
+                <div id="chatPanelContent">
+                    Učitavanje poruka...
+                </div>
+            </div>
+        </div>
+    }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        const messagesButton = document.getElementById("messagesButton");
+        const messagesPanel = document.getElementById("messagesPanel");
+        const closeMessages = document.getElementById("closeMessages");
+
+        if (messagesButton) {
+            messagesButton.addEventListener("click", function () {
+                messagesPanel.classList.toggle("d-none");
+
+                if (!messagesPanel.classList.contains("d-none")) {
+                        fetch('/Poruka/ChatPanel')
+                            .then(response => response.text())
+                            .then(html => {
+                                document.getElementById("chatPanelContent").innerHTML = html;
+                            });
+                }
+            });
+        }
+
+        if (closeMessages) {
+            closeMessages.addEventListener("click", function () {
+                messagesPanel.classList.add("d-none");
+            });
+        }
+
+        function loadChat(idSagovornik) {
+            fetch('/Poruka/ChatPanel?idSagovornik=' + idSagovornik)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("chatPanelContent").innerHTML = html;
+                });
+        }
+
+        function openMessagesWith(idSagovornik) {
+            messagesPanel.classList.remove("d-none");
+
+            fetch('/Poruka/ChatPanel?idSagovornik=' + idSagovornik)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("chatPanelContent").innerHTML = html;
+                });
+        }
+
+        function sendReply(event, idPrimalac) {
+            event.preventDefault();
+
+            const form = event.target;
+            const sadrzaj = form.querySelector('input[name="sadrzaj"]').value;
+
+            fetch('/Poruka/Reply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `idPrimalac=${idPrimalac}&sadrzaj=${encodeURIComponent(sadrzaj)}`
+            })
+            .then(() => {
+                loadChat(idPrimalac);
+            });
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

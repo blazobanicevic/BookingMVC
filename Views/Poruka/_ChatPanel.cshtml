@@ -1,0 +1,70 @@
+﻿@model List<BookingMVC.Models.Poruka>
+
+@{
+    int idKorisnik = ViewBag.IdKorisnik;
+    int? aktivniSagovornikId = ViewBag.AktivniSagovornikId;
+    var sagovornici = ViewBag.Sagovornici as List<BookingMVC.Models.Korisnik>;
+}
+
+<div class="chat-wrapper">
+
+    <div class="chat-sidebar">
+        <h6>Razgovori</h6>
+
+        @if (sagovornici == null || !sagovornici.Any())
+        {
+            <p>Nema razgovora.</p>
+        }
+        else
+        {
+            @foreach (var sagovornik in sagovornici)
+            {
+                <a href="#"
+                   class="chat-user @(sagovornik.IdKorisnik == aktivniSagovornikId ? "active" : "")"
+                   onclick="loadChat(@sagovornik.IdKorisnik); return false;">
+                    @sagovornik.Ime @sagovornik.Prezime
+                </a>
+            }
+        }
+    </div>
+
+    <div class="chat-main">
+        @if (aktivniSagovornikId == null)
+        {
+            <p>Izaberite razgovor.</p>
+        }
+        else
+        {
+            <div class="chat-messages">
+                @foreach (var poruka in Model)
+                {
+                    bool mojaPoruka = poruka.IdPosiljalac == idKorisnik;
+
+                    <div class="chat-message @(mojaPoruka ? "mine" : "theirs")">
+                        <div class="chat-bubble">
+                            @poruka.Sadrzaj
+                            <br />
+                            <small>@poruka.VrijemeSlanja.ToString("dd.MM.yyyy HH:mm")</small>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <form class="chat-reply-form" onsubmit="sendReply(event, @aktivniSagovornikId)">
+
+                <input type="hidden" name="idPrimalac" value="@aktivniSagovornikId" />
+
+                <input type="text"
+                       name="sadrzaj"
+                       class="form-control form-control-sm"
+                       placeholder="Napiši poruku..."
+                       required />
+
+                <button type="submit" class="btn btn-sm btn-primary">
+                    Pošalji
+                </button>
+            </form>
+        }
+    </div>
+
+</div>
