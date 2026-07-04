@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookingMVC.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 
@@ -15,6 +15,18 @@ namespace BookingMVC.Controllers
 
         public IActionResult Index()
         {
+            var uloga = HttpContext.Session.GetString("Uloga");
+
+            if (uloga == "Admin")
+            {
+                return RedirectToAction("AdminDashboard");
+            }
+
+            if (uloga == "Korisnik")
+            {
+                return RedirectToAction("UserDashboard");
+            }
+
             return View();
         }
 
