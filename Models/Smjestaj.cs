@@ -21,8 +21,7 @@ namespace BookingMVC.Models
         [StringLength(100)]
         public string Naziv { get; set; }
 
-        [Required]
-        public string Opis { get; set; }
+        public string? Opis { get; set; } //? znaci da moze imati null vrijednost
 
         [Required]
         [StringLength(150)]

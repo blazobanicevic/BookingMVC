@@ -1,0 +1,58 @@
+﻿@model List<BookingMVC.Models.Smjestaj>
+
+@{
+    ViewData["Title"] = "Smještaji";
+}
+
+<h2>Smještaji</h2>
+
+<p>
+    <a asp-controller="Smjestaj" asp-action="Create" class="btn btn-primary">
+        Dodaj smještaj
+    </a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Naziv</th>
+            <th>Opis</th>
+            <th>Grad</th>
+            <th>Adresa</th>
+            <th>Tip</th>
+            <th>Cijena po noći</th>
+            <th>Broj osoba</th>
+            <th>Aktivan</th>
+            <th>Akcije</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var smjestaj in Model)
+        {
+            <tr>
+                <td>@smjestaj.Naziv</td>
+                <td>@smjestaj.Opis</td>
+                <td>@smjestaj.Grad.Naziv</td>
+                <td>@smjestaj.Adresa</td>
+                <td>@smjestaj.TipSmjestaja.Naziv</td>
+                <td>@smjestaj.CijenaPoNoci</td>
+                <td>@smjestaj.BrojOsoba</td>
+                <td>@smjestaj.Aktivan</td>
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@smjestaj.IdSmjestaj"
+                       class="btn btn-warning btn-sm">
+                        Uredi
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@smjestaj.IdSmjestaj"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Da li ste sigurni da želite obrisati ovaj smještaj?');">
+                        Obriši
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

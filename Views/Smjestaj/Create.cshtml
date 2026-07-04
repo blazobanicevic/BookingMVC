@@ -1,0 +1,51 @@
+﻿@model BookingMVC.Models.Smjestaj
+
+@{
+    ViewData["Title"] = "Dodaj smještaj";
+}
+
+<h2>Dodaj smještaj</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label>Naziv</label>
+        <input asp-for="Naziv" />
+    </div>
+
+    <div>
+        <label>Opis</label>
+        <textarea asp-for="Opis"></textarea>
+    </div>
+
+    <div>
+        <label>Adresa</label>
+        <input asp-for="Adresa" />
+    </div>
+
+    <div>
+        <label>Broj osoba</label>
+        <input asp-for="BrojOsoba" type="number" />
+    </div>
+
+    <div>
+        <label>Cijena po noći</label>
+        <input asp-for="CijenaPoNoci" type="number" step="0.01" />
+    </div>
+
+    <div>
+        <label>Grad</label>
+        <input type="text" name="gradNaziv" />
+    </div>
+
+    <div>
+        <label>Tip smještaja</label>
+        <select asp-for="IdTip">
+            @foreach (var tip in ViewBag.Tipovi)
+            {
+                <option value="@tip.IdTipSmjestaja">@tip.Naziv</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">Sačuvaj</button>
+</form>
