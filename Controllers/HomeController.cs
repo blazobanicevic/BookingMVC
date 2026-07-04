@@ -30,11 +30,6 @@ namespace BookingMVC.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         public IActionResult UserDashboard()
         {
             if (HttpContext.Session.GetString("Uloga") != "Korisnik")

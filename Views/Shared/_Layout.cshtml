@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - BookingMVC</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BookingMVC.styles.css" asp-append-version="true" />
 </head>
@@ -19,18 +20,86 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark"
+                               asp-controller="Home"
+                               asp-action="Index">
+                                Home
+                            </a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <form asp-controller="Smjestaj"
+                                  asp-action="Search"
+                                  method="get"
+                                  class="d-flex align-items-center">
+
+                                <div class="input-group">
+
+                                    <input class="form-control"
+                                           type="search"
+                                           name="search"
+                                           placeholder="Naziv smještaja ili grad..." />
+
+                                    <button class="btn btn-outline-primary" type="submit">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+
+                                </div>
+
+                            </form>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark"
+                               href="#">
+                                Detaljna pretraga
+                            </a>
+                        </li>
+
                         @if (Context.Session.GetString("Uloga") == "Admin")
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Smjestaj" asp-action="Index">Smještaji</a>
+                                <a class="nav-link text-dark"
+                                   asp-controller="Smjestaj"
+                                   asp-action="Index">
+                                    Smještaji
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"
+                                   href="#">
+                                    Rezervacije
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"
+                                   href="#">
+                                    Recenzije
+                                </a>
                             </li>
                         }
+
+                        @if (Context.Session.GetString("Uloga") == "Korisnik")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"
+                                   href="#">
+                                    Lista želja
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"
+                                   href="#">
+                                    Rezervacije
+                                </a>
+                            </li>
+                        }
+
                     </ul>
 
                     <ul class="navbar-nav">
@@ -64,7 +133,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - BookingMVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2026 - BookingMVC
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

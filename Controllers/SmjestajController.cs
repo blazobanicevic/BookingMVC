@@ -144,5 +144,27 @@ namespace BookingMVC.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public IActionResult Search(string search)
+        {
+            var query = _context.Smjestaji
+                .Include(s => s.Grad)
+                .Include(s => s.TipSmjestaja)
+                .Include(s => s.Admin)
+                .Where(s => s.Aktivan);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(s =>
+                    s.Naziv.Contains(search) ||
+                    s.Grad.Naziv.Contains(search) ||
+                    s.TipSmjestaja.Naziv.Contains(search));
+            }
+
+            var smjestaji = query.ToList();
+
+            return View(smjestaji);
+        }
     }
 }
