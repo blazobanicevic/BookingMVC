@@ -31,9 +31,21 @@ namespace BookingMVC.Data
                 .HasKey(ss => new { ss.IdSmjestaj, ss.IdSadrzaj });
 
             modelBuilder.Entity<Uloga>().HasData(
-    new Uloga { IdUloga = 1, Naziv = "Korisnik" },
-    new Uloga { IdUloga = 2, Naziv = "Admin" }
-);
+                new Uloga { IdUloga = 1, Naziv = "Korisnik" },
+                new Uloga { IdUloga = 2, Naziv = "Admin" }
+            );
+
+            modelBuilder.Entity<Korisnik>().HasData(
+                new Korisnik
+                {
+                    IdKorisnik = 1,
+                    Ime = "Admin",
+                    Prezime = "Booking",
+                    Email = "admin@bookingmvc.com",
+                    Lozinka = "admin123",
+                    IdUloga = 2
+                }
+            );
 
             modelBuilder.Entity<StatusRezervacije>().HasData(
                 new StatusRezervacije { IdStatus = 1, Naziv = "Na cekanju" },
