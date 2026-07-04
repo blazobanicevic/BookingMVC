@@ -23,6 +23,26 @@ namespace BookingMVC.Controllers
             return View();
         }
 
+        public IActionResult UserDashboard()
+        {
+            if (HttpContext.Session.GetString("Uloga") != "Korisnik")
+            {
+                return RedirectToAction("AdminDashboard");
+            }
+
+            return View();
+        }
+
+        public IActionResult AdminDashboard()
+        {
+            if (HttpContext.Session.GetString("Uloga") != "Admin")
+            {
+                return RedirectToAction("UserDashboard");
+            }
+
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

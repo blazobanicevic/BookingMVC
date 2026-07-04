@@ -69,7 +69,12 @@ namespace BookingMVC.Controllers
             HttpContext.Session.SetString("Prezime", korisnik.Prezime);
             HttpContext.Session.SetString("Uloga", korisnik.Uloga.Naziv);
 
-            return RedirectToAction("Index", "Home");
+            if (korisnik.Uloga.Naziv == "Admin")
+            {
+                return RedirectToAction("AdminDashboard", "Home");
+            }
+
+            return RedirectToAction("UserDashboard", "Home");
         }
 
         public IActionResult Logout()
