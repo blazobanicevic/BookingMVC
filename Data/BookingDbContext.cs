@@ -78,6 +78,12 @@ namespace BookingMVC.Data
                 new Grad { IdGrad = 5, Naziv = "Bar", Drzava = "Crna Gora" }
             );
 
+            modelBuilder.Entity<Recenzija>()
+                .ToTable("Recenzije", tb =>
+                {
+                    tb.HasTrigger("trg_AfterInsertRecenzija");
+                });
+
             foreach (var foreignKey in modelBuilder.Model.GetEntityTypes()
                          .SelectMany(e => e.GetForeignKeys()))
             {
