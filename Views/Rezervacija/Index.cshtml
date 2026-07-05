@@ -3,109 +3,172 @@
 @{
     ViewData["Title"] = "Rezervacije";
     var uloga = Context.Session.GetString("Uloga");
+
+    var rezervacijeNaCekanju = Model.Where(r => r.IdStatus == 1).ToList();
+    var sveRezervacijeSortirane = Model
+        .OrderBy(r => r.IdStatus == 1 ? 0 : 1)
+        .ThenBy(r => r.DatumPrijave)
+        .ToList();
 }
 
-<h2>Rezervacije</h2>
+<div class="reservations-page">
 
-@if (!Model.Any())
-{
-    <p>Nema rezervacija za prikaz.</p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Smještaj</th>
-                <th>Grad</th>
-                <th>@(uloga == "Admin" ? "Korisnik" : "Izdavalac")</th>
-                <th>Datum prijave</th>
-                <th>Datum odjave</th>
-                <th>Broj osoba</th>
-                <th>Status</th>
-                 <th>Akcije</th>
-            </tr>
-        </thead>
+    <div class="reservations-hero">
+        <div class="reservations-hero-icon">📅</div>
+        <div>
+            <h1>Rezervacije</h1>
+            <p>
+                @(uloga == "Admin"
+                                ? "Pregled i upravljanje rezervacijama."
+                                : "Pregled tvojih rezervacija.")
+            </p>
+        </div>
+    </div>
 
-        <tbody>
-            @foreach (var r in Model)
-            {
-                <tr>
-                    <td>@r.Smjestaj.Naziv</td>
-                    <td>@r.Smjestaj.Grad.Naziv</td>
-                    <td>
-                        @if (uloga == "Admin")
-                        {
-                            @($"{r.Korisnik.Ime} {r.Korisnik.Prezime}")
-                        }
-                        else
-                        {
-                            @($"{r.Smjestaj.Admin.Ime} {r.Smjestaj.Admin.Prezime}")
-                        }
-                    </td>
-                    <td>@r.DatumPrijave.ToString("dd.MM.yyyy")</td>
-                    <td>@r.DatumOdjave.ToString("dd.MM.yyyy")</td>
-                    <td>@r.BrojOsoba</td>
-                    <td>@r.StatusRezervacije.Naziv</td>
+    @if (!Model.Any())
+    {
+        <div class="no-results">
+            <h3>Nema rezervacija</h3>
+            <p>Nema rezervacija za prikaz.</p>
+        </div>
+    }
+    else
+    {
+        @if (uloga == "Admin" && rezervacijeNaCekanju.Any())
+        {
+            <section class="reservation-section">
+                <div class="reservation-section-header">
+                    <div>
+                        <h2>📅 Na čekanju <span>@rezervacijeNaCekanju.Count</span></h2>
+                        <p>Rezervacije koje trebaju vašu potvrdu.</p>
+                    </div>
+                </div>
 
-                    @if (uloga == "Admin")
+                <div class="pending-reservation-grid">
+                    @foreach (var r in rezervacijeNaCekanju)
                     {
-                        <td>
+                        <div class="pending-reservation-card">
+                            <div class="pending-card-top">
+                                <div>
+                                    <h3>@r.Smjestaj.Naziv</h3>
+                                    <p>📍 @r.Smjestaj.Grad.Naziv</p>
+                                </div>
 
-                            @if (r.IdStatus == 1)
-                            {
-                                <form asp-action="Confirm"
-                                      method="post"
-                                      style="display:inline;">
+                                <span class="reservation-status status-@r.IdStatus">
+                                    @r.StatusRezervacije.Naziv
+                                </span>
+                            </div>
 
-                                    <input type="hidden"
-                                           name="idRezervacija"
-                                           value="@r.IdRezervacija" />
+                            <div class="pending-card-info">
+                                <div>
+                                    <strong>Korisnik</strong>
+                                    <span>@r.Korisnik.Ime @r.Korisnik.Prezime</span>
+                                </div>
 
-                                    <button class="btn btn-success btn-sm">
-                                        Potvrdi
-                                    </button>
+                                <div>
+                                    <strong>Prijava</strong>
+                                    <span>@r.DatumPrijave.ToString("dd.MM.yyyy")</span>
+                                </div>
 
+                                <div>
+                                    <strong>Odjava</strong>
+                                    <span>@r.DatumOdjave.ToString("dd.MM.yyyy")</span>
+                                </div>
+
+                                <div>
+                                    <strong>Osoba</strong>
+                                    <span>@r.BrojOsoba</span>
+                                </div>
+                            </div>
+
+                            <div class="pending-card-actions">
+                                <form asp-action="Confirm" method="post">
+                                    <input type="hidden" name="idRezervacija" value="@r.IdRezervacija" />
+                                    <button class="reservation-btn confirm">Potvrdi</button>
                                 </form>
 
-                                <form asp-action="Reject"
+                                <form asp-action="Reject" method="post">
+                                    <input type="hidden" name="idRezervacija" value="@r.IdRezervacija" />
+                                    <button class="reservation-btn reject">Odbij</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+
+        <section class="reservation-section">
+            <div class="reservation-section-header">
+                <div>
+                    <h2>📅 Sve rezervacije</h2>
+                    <p>Sve vaše rezervacije.</p>
+                </div>
+            </div>
+
+            <div class="reservation-compact-list">
+                @foreach (var r in sveRezervacijeSortirane)
+                {
+                    <div class="reservation-compact-card">
+
+                        <div class="reservation-place">
+                            <h3>@r.Smjestaj.Naziv</h3>
+                            <p>@r.Smjestaj.Grad.Naziv</p>
+                        </div>
+
+                        <div class="reservation-compact-info">
+                            <div>
+                                <strong>@(uloga == "Admin" ? "Korisnik" : "Izdavalac")</strong>
+                                <span>
+                                    @if (uloga == "Admin")
+                                    {
+                                        @($"{r.Korisnik.Ime} {r.Korisnik.Prezime}")
+                                    }
+                                    else
+                                    {
+                                        @($"{r.Smjestaj.Admin.Ime} {r.Smjestaj.Admin.Prezime}")
+                                    }
+                                </span>
+                            </div>
+
+                            <div>
+                                <strong>Prijava</strong>
+                                <span>@r.DatumPrijave.ToString("dd.MM.yyyy")</span>
+                            </div>
+
+                            <div>
+                                <strong>Odjava</strong>
+                                <span>@r.DatumOdjave.ToString("dd.MM.yyyy")</span>
+                            </div>
+
+                            <div>
+                                <strong>Osoba</strong>
+                                <span>@r.BrojOsoba</span>
+                            </div>
+                        </div>
+
+                        <div class="reservation-right">
+                            <span class="reservation-status status-@r.IdStatus">
+                                @r.StatusRezervacije.Naziv
+                            </span>
+
+                            @if (uloga == "Korisnik")
+                            {
+                                <form asp-action="Cancel"
                                       method="post"
-                                      style="display:inline; margin-left:5px;">
+                                      onsubmit="return confirm('Da li ste sigurni da želite da otkažete ovu rezervaciju?');">
 
-                                    <input type="hidden"
-                                           name="idRezervacija"
-                                           value="@r.IdRezervacija" />
-
-                                    <button class="btn btn-danger btn-sm">
-                                        Odbij
-                                    </button>
-
+                                    <input type="hidden" name="idRezervacija" value="@r.IdRezervacija" />
+                                    <button class="reservation-btn cancel">Otkaži</button>
                                 </form>
                             }
+                        </div>
 
-                        </td>
-                    }
-                    @if (uloga == "Korisnik")
-                    {
-                        <td>
-                            <form asp-action="Cancel"
-                                  method="post"
-                                  onsubmit="return confirm('Da li ste sigurni da želite da otkažete ovu rezervaciju?');">
-
-                                <input type="hidden"
-                                       name="idRezervacija"
-                                       value="@r.IdRezervacija" />
-
-                                <button class="btn btn-warning btn-sm">
-                                    Otkaži
-                                </button>
-                            </form>
-                        </td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
+                    </div>
+                }
+            </div>
+        </section>
+    }
 
     @if (uloga == "Admin")
     {
@@ -122,85 +185,93 @@ else
         var sljedeciMjesec = mjesec == 12 ? 1 : mjesec + 1;
         var sljedecaGodina = mjesec == 12 ? godina + 1 : godina;
 
-        <hr />
+        <section class="admin-calendar-section">
 
-        <h3>Kalendar dostupnosti smještaja</h3>
+            <div class="calendar-header-box">
+                <div>
+                    <h2>Kalendar dostupnosti smještaja</h2>
+                    <p>Pregled zauzetih termina po smještajima.</p>
+                </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a class="btn btn-outline-secondary"
-               asp-action="Index"
-               asp-route-mjesec="@prethodniMjesec"
-               asp-route-godina="@prethodnaGodina">
-                Prethodni mjesec
-            </a>
+                <div class="calendar-navigation">
+                    <a asp-action="Index"
+                       asp-route-mjesec="@prethodniMjesec"
+                       asp-route-godina="@prethodnaGodina">
+                        ← Prethodni
+                    </a>
 
-            <h4>
-                @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mjesec).ToUpper()
-                @godina
-            </h4>
+                    <strong>
+                        @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mjesec).ToUpper()
+                        @godina
+                    </strong>
 
-            <a class="btn btn-outline-secondary"
-               asp-action="Index"
-               asp-route-mjesec="@sljedeciMjesec"
-               asp-route-godina="@sljedecaGodina">
-                Sljedeći mjesec
-            </a>
-        </div>
+                    <a asp-action="Index"
+                       asp-route-mjesec="@sljedeciMjesec"
+                       asp-route-godina="@sljedecaGodina">
+                        Sljedeći →
+                    </a>
+                </div>
+            </div>
 
-        <table class="table table-bordered availability-calendar">
-            <thead>
-                <tr>
-                    <th>Smještaj</th>
+            <div class="calendar-table-wrapper">
+                <table class="table availability-calendar">
+                    <thead>
+                        <tr>
+                            <th>Smještaj</th>
 
-                    @for (int dan = 1; dan <= daniUMjesecu; dan++)
-                    {
-                        <th>@dan</th>
-                    }
-                </tr>
-            </thead>
-
-            <tbody>
-                @foreach (var smjestaj in smjestajiAdmina)
-                {
-                    <tr>
-                        <td>
-                            <strong>@smjestaj.Naziv</strong><br />
-                            <small>@smjestaj.Grad.Naziv</small>
-                        </td>
-
-                        @for (int dan = 1; dan <= daniUMjesecu; dan++)
-                        {
-                            var datum = new DateTime(godina, mjesec, dan);
-
-                            var rezervacijaDana = zauzetiTermini.FirstOrDefault(r =>
-                            r.IdSmjestaj == smjestaj.IdSmjestaj &&
-                            datum >= r.DatumPrijave.Date &&
-                            datum < r.DatumOdjave.Date);
-
-                            string cssKlasa = "";
-
-                            if (rezervacijaDana != null)
+                            @for (int dan = 1; dan <= daniUMjesecu; dan++)
                             {
-                                if (rezervacijaDana.IdStatus == 1)
-                                {
-                                    cssKlasa = "pending-day";
-                                }
-                                else if (rezervacijaDana.IdStatus == 2)
-                                {
-                                    cssKlasa = "confirmed-day";
-                                }
+                                <th>@dan</th>
                             }
+                        </tr>
+                    </thead>
 
-                            <td class="@cssKlasa"></td>
+                    <tbody>
+                        @foreach (var smjestaj in smjestajiAdmina)
+                        {
+                            <tr>
+                                <td class="calendar-place">
+                                    <strong>@smjestaj.Naziv</strong>
+                                    <small>@smjestaj.Grad.Naziv</small>
+                                </td>
+
+                                @for (int dan = 1; dan <= daniUMjesecu; dan++)
+                                {
+                                    var datum = new DateTime(godina, mjesec, dan);
+
+                                    var rezervacijaDana = zauzetiTermini.FirstOrDefault(r =>
+                                    r.IdSmjestaj == smjestaj.IdSmjestaj &&
+                                    datum >= r.DatumPrijave.Date &&
+                                    datum < r.DatumOdjave.Date);
+
+                                    string cssKlasa = "";
+
+                                    if (rezervacijaDana != null)
+                                    {
+                                        if (rezervacijaDana.IdStatus == 1)
+                                        {
+                                            cssKlasa = "pending-day";
+                                        }
+                                        else if (rezervacijaDana.IdStatus == 2)
+                                        {
+                                            cssKlasa = "confirmed-day";
+                                        }
+                                    }
+
+                                    <td class="@cssKlasa"></td>
+                                }
+                            </tr>
                         }
-                    </tr>
-                }
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="mt-3">
-            <span class="legend-box pending-day"></span> Na čekanju
-            <span class="legend-box confirmed-day ms-3"></span> Potvrđeno
-        </div>
+            <div class="calendar-legend">
+                <span class="legend-box pending-day"></span> Na čekanju
+                <span class="legend-box confirmed-day"></span> Potvrđeno
+            </div>
+
+        </section>
     }
-}
+
+</div>
