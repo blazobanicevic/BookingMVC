@@ -1,0 +1,19 @@
+﻿@model List<BookingMVC.Models.Notifikacija>
+
+@if (!Model.Any())
+{
+    <p>Nema notifikacija.</p>
+}
+else
+{
+    @foreach (var n in Model)
+    {
+        <div class="notification-item">
+
+            <strong>@n.Naslov</strong>
+
+            <p>@n.Tekst</p>
+
+        </div>
+    }
+}

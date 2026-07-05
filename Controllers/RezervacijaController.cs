@@ -45,6 +45,19 @@ namespace BookingMVC.Controllers
             _context.Rezervacije.Add(rezervacija);
             _context.SaveChanges();
 
+            var smjestaj = _context.Smjestaji
+                .Include(s => s.Admin)
+                .First(s => s.IdSmjestaj == idSmjestaj);
+
+            _context.Notifikacije.Add(new Notifikacija
+            {
+                IdKorisnik = smjestaj.IdAdmin,
+                Naslov = "Nova rezervacija",
+                Tekst = $"{HttpContext.Session.GetString("Ime")} je poslao zahtjev za rezervaciju smještaja \"{smjestaj.Naziv}\"."
+            });
+
+            _context.SaveChanges();
+
             TempData["ReservationSuccess"] = "Rezervacija je uspješno poslata i čeka potvrdu.";
 
             return RedirectToAction("Details", "Smjestaj", new { id = idSmjestaj });
@@ -146,6 +159,13 @@ namespace BookingMVC.Controllers
 
             rezervacija.IdStatus = 2;
 
+            _context.Notifikacije.Add(new Notifikacija
+            {
+                IdKorisnik = rezervacija.IdKorisnik,
+                Naslov = "Rezervacija potvrđena",
+                Tekst = $"Vaša rezervacija za \"{rezervacija.Smjestaj.Naziv}\" je potvrđena."
+            });
+
             _context.SaveChanges();
 
             return RedirectToAction("Index");
@@ -169,6 +189,13 @@ namespace BookingMVC.Controllers
 
             rezervacija.IdStatus = 3;
 
+            _context.Notifikacije.Add(new Notifikacija
+            {
+                IdKorisnik = rezervacija.IdKorisnik,
+                Naslov = "Rezervacija odbijena",
+                Tekst = $"Vaša rezervacija za \"{rezervacija.Smjestaj.Naziv}\" je odbijena."
+            });
+
             _context.SaveChanges();
 
             return RedirectToAction("Index");
@@ -180,6 +207,7 @@ namespace BookingMVC.Controllers
             int idKorisnik = HttpContext.Session.GetInt32("IdKorisnik").Value;
 
             var rezervacija = _context.Rezervacije
+                .Include(r => r.Smjestaj)
                 .FirstOrDefault(r =>
                     r.IdRezervacija == idRezervacija &&
                     r.IdKorisnik == idKorisnik);
@@ -190,6 +218,14 @@ namespace BookingMVC.Controllers
             }
 
             rezervacija.IdStatus = 4;
+
+            _context.Notifikacije.Add(new Notifikacija
+            {
+                IdKorisnik = rezervacija.Smjestaj.IdAdmin,
+                Naslov = "Rezervacija otkazana",
+                Tekst = $"{HttpContext.Session.GetString("Ime")} je otkazao rezervaciju za \"{rezervacija.Smjestaj.Naziv}\"."
+            });
+
             _context.SaveChanges();
 
             return RedirectToAction("Index");

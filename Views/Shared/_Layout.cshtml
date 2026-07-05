@@ -116,9 +116,9 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-dark"
-                                   asp-controller="Notifikacija"
-                                   asp-action="Index">
+                                <a href="#"
+                                   id="notificationButton"
+                                   class="nav-link text-dark">
                                     🔔
                                 </a>
                             </li>
@@ -161,6 +161,47 @@
             </div>
         </div>
     }
+
+    @if (Context.Session.GetInt32("IdKorisnik") != null)
+    {
+        <div id="notificationPanel" class="notification-panel d-none">
+
+            <div class="notification-header">
+                <span>Notifikacije</span>
+
+                <div class="notification-actions">
+
+                    <form asp-controller="Notifikacija"
+                          asp-action="ClearAll"
+                          method="post">
+
+                        <button type="submit"
+                                class="clearNotificationsButton">
+                            Očisti sve
+                        </button>
+
+                    </form>
+
+                    <button type="button"
+                            id="closeNotifications"
+                            class="btn btn-sm btn-light">
+                        Zatvori
+                    </button>
+
+                </div>
+            </div>
+
+            <div class="notification-body">
+
+                <div id="notificationPanelContent">
+                    Učitavanje notifikacija...
+                </div>
+
+            </div>
+
+        </div>
+    }
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -223,6 +264,42 @@
             .then(() => {
                 loadChat(idPrimalac);
             });
+        }
+
+        const notificationButton = document.getElementById("notificationButton");
+        const notificationPanel = document.getElementById("notificationPanel");
+        const closeNotifications = document.getElementById("closeNotifications");
+
+        if (notificationButton) {
+
+            notificationButton.addEventListener("click", function () {
+
+                notificationPanel.classList.toggle("d-none");
+
+                if (!notificationPanel.classList.contains("d-none")) {
+
+                    fetch('/Notifikacija/NotificationPanel')
+                        .then(response => response.text())
+                        .then(html => {
+
+                            document.getElementById("notificationPanelContent").innerHTML = html;
+
+                        });
+
+                }
+
+            });
+
+        }
+
+        if (closeNotifications) {
+
+            closeNotifications.addEventListener("click", function () {
+
+                notificationPanel.classList.add("d-none");
+
+            });
+
         }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
