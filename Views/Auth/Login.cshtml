@@ -2,23 +2,44 @@
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
+<div class="auth-page">
+    <div class="auth-container">
 
-<form method="post" asp-action="Login" asp-controller="Auth">
-    <div>
-        <label>Email</label>
-        <input type="email" name="email" />
+        <div class="auth-panel">
+            <h1>Dobrodošao nazad</h1>
+            <p>Prijavi se i nastavi sa korišćenjem sistema.</p>
+        </div>
+
+        <div class="auth-card">
+            <h2>Login</h2>
+
+            <form method="post" asp-action="Login" asp-controller="Auth">
+
+                <div class="auth-input-group">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="Unesi email" required />
+                </div>
+
+                <div class="auth-input-group">
+                    <label>Lozinka</label>
+                    <input type="password" name="lozinka" placeholder="Unesi lozinku" required />
+                </div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="auth-error">
+                        @ViewBag.Error
+                    </div>
+                }
+
+                <button type="submit" class="auth-btn">Prijavi se</button>
+            </form>
+
+            <p class="auth-link">
+                Nemaš nalog?
+                <a asp-controller="Auth" asp-action="Register">Registruj se</a>
+            </p>
+        </div>
+
     </div>
-
-    <div>
-        <label>Lozinka</label>
-        <input type="password" name="lozinka" />
-    </div>
-
-    <button type="submit">Prijavi se</button>
-</form>
-
-@if (ViewBag.Error != null)
-{
-    <p style="color:red">@ViewBag.Error</p>
-}
+</div>
