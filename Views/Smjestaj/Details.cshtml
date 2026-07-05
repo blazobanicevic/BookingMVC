@@ -16,6 +16,20 @@
 <p><strong>Cijena:</strong> @Model.CijenaPoNoci € / noć</p>
 <p><strong>Izdavalac:</strong> @Model.Admin.Ime @Model.Admin.Prezime</p>
 
+@if (TempData["ReservationSuccess"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["ReservationSuccess"]
+    </div>
+}
+
+@if (TempData["ReservationError"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ReservationError"]
+    </div>
+}
+
 @if (uloga == "Korisnik")
 {
     <hr />
@@ -39,9 +53,100 @@
         </a>
     }
 
-    <a href="#" class="btn btn-primary">
+    <button type="button" class="btn btn-primary" onclick="openReservationModal()">
         Rezerviši
-    </a>
+    </button>
 
     <a href="#" onclick="openMessagesWith(@Model.IdAdmin); return false;" class="btn btn-outline-secondary"> Pošalji poruku izdavaocu</a>
 }
+
+@if (uloga == "Korisnik")
+{
+    <div id="reservationBackdrop" class="reservation-backdrop d-none">
+        <div class="reservation-modal">
+            <div class="reservation-header">
+                <div>
+                    <span class="reservation-kicker">Rezervacija</span>
+                    <h2>@Model.Naziv</h2>
+                    <p>@Model.CijenaPoNoci € po noći</p>
+                </div>
+
+                <button type="button" class="reservation-close" onclick="closeReservationModal()">
+                    X
+                </button>
+            </div>
+
+            <form asp-controller="Rezervacija" asp-action="Create" method="post">
+                <input type="hidden" name="idSmjestaj" value="@Model.IdSmjestaj" />
+                <input type="hidden" name="brojOsoba" value="@Model.BrojOsoba" />
+
+                <div class="reservation-field">
+                    <span>Datum prijave</span>
+                    <input id="datumPrijave" name="datumPrijave" type="date" onchange="calculateReservation()" required />
+                </div>
+
+                <div class="reservation-field">
+                    <span>Datum odjave</span>
+                    <input id="datumOdjave" name="datumOdjave" type="date" onchange="calculateReservation()" required />
+                </div>
+
+                <div class="reservation-summary">
+                    <p><strong>Broj osoba:</strong> @Model.BrojOsoba</p>
+                    <p><strong>Broj noćenja:</strong> <span id="brojNocenja">0</span></p>
+                    <p><strong>Ukupno:</strong> <span id="ukupnaCijena">0</span> €</p>
+                </div>
+
+                <p id="reservationError" class="reservation-error d-none">
+                    Datum odjave mora biti poslije datuma prijave.
+                </p>
+
+                <button id="confirmReservationButton" type="submit" class="reservation-submit" disabled>
+                    Potvrdi rezervaciju
+                </button>
+            </form>
+        </div>
+    </div>
+}
+
+<script>
+    const cijenaPoNoci = @Model.CijenaPoNoci.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+    function openReservationModal() {
+        document.getElementById("reservationBackdrop").classList.remove("d-none");
+    }
+
+    function closeReservationModal() {
+        document.getElementById("reservationBackdrop").classList.add("d-none");
+    }
+
+    function calculateReservation() {
+        const prijava = document.getElementById("datumPrijave").value;
+        const odjava = document.getElementById("datumOdjave").value;
+        const error = document.getElementById("reservationError");
+        const button = document.getElementById("confirmReservationButton");
+
+        if (!prijava || !odjava) {
+            button.disabled = true;
+            return;
+        }
+
+        const start = new Date(prijava);
+        const end = new Date(odjava);
+        const diffTime = end - start;
+        const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+        if (diffDays <= 0) {
+            error.classList.remove("d-none");
+            button.disabled = true;
+            document.getElementById("brojNocenja").innerText = "0";
+            document.getElementById("ukupnaCijena").innerText = "0";
+            return;
+        }
+
+        error.classList.add("d-none");
+        button.disabled = false;
+
+        document.getElementById("brojNocenja").innerText = diffDays;
+        document.getElementById("ukupnaCijena").innerText = (diffDays * cijenaPoNoci).toFixed(2);
+    }
+</script>

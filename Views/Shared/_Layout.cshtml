@@ -71,7 +71,8 @@
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark"
-                                   href="#">
+                                   asp-controller="Rezervacija"
+                                   asp-action="Index">
                                     Rezervacije
                                 </a>
                             </li>
@@ -96,7 +97,8 @@
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark"
-                                   href="#">
+                                   asp-controller="Rezervacija"
+                                   asp-action="Index">
                                     Rezervacije
                                 </a>
                             </li>
@@ -112,14 +114,17 @@
                                     @Context.Session.GetString("Ime") (@Context.Session.GetString("Uloga"))
                                 </span>
                             </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark"
+                                   asp-controller="Notifikacija"
+                                   asp-action="Index">
+                                    🔔
+                                </a>
+                            </li>
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Auth" asp-action="Logout">Logout</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Login</a>
                             </li>
                         }
                     </ul>

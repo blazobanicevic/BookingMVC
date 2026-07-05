@@ -1,0 +1,206 @@
+﻿@model List<BookingMVC.Models.Rezervacija>
+
+@{
+    ViewData["Title"] = "Rezervacije";
+    var uloga = Context.Session.GetString("Uloga");
+}
+
+<h2>Rezervacije</h2>
+
+@if (!Model.Any())
+{
+    <p>Nema rezervacija za prikaz.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Smještaj</th>
+                <th>Grad</th>
+                <th>@(uloga == "Admin" ? "Korisnik" : "Izdavalac")</th>
+                <th>Datum prijave</th>
+                <th>Datum odjave</th>
+                <th>Broj osoba</th>
+                <th>Status</th>
+                 <th>Akcije</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.Smjestaj.Naziv</td>
+                    <td>@r.Smjestaj.Grad.Naziv</td>
+                    <td>
+                        @if (uloga == "Admin")
+                        {
+                            @($"{r.Korisnik.Ime} {r.Korisnik.Prezime}")
+                        }
+                        else
+                        {
+                            @($"{r.Smjestaj.Admin.Ime} {r.Smjestaj.Admin.Prezime}")
+                        }
+                    </td>
+                    <td>@r.DatumPrijave.ToString("dd.MM.yyyy")</td>
+                    <td>@r.DatumOdjave.ToString("dd.MM.yyyy")</td>
+                    <td>@r.BrojOsoba</td>
+                    <td>@r.StatusRezervacije.Naziv</td>
+
+                    @if (uloga == "Admin")
+                    {
+                        <td>
+
+                            @if (r.IdStatus == 1)
+                            {
+                                <form asp-action="Confirm"
+                                      method="post"
+                                      style="display:inline;">
+
+                                    <input type="hidden"
+                                           name="idRezervacija"
+                                           value="@r.IdRezervacija" />
+
+                                    <button class="btn btn-success btn-sm">
+                                        Potvrdi
+                                    </button>
+
+                                </form>
+
+                                <form asp-action="Reject"
+                                      method="post"
+                                      style="display:inline; margin-left:5px;">
+
+                                    <input type="hidden"
+                                           name="idRezervacija"
+                                           value="@r.IdRezervacija" />
+
+                                    <button class="btn btn-danger btn-sm">
+                                        Odbij
+                                    </button>
+
+                                </form>
+                            }
+
+                        </td>
+                    }
+                    @if (uloga == "Korisnik")
+                    {
+                        <td>
+                            <form asp-action="Cancel"
+                                  method="post"
+                                  onsubmit="return confirm('Da li ste sigurni da želite da otkažete ovu rezervaciju?');">
+
+                                <input type="hidden"
+                                       name="idRezervacija"
+                                       value="@r.IdRezervacija" />
+
+                                <button class="btn btn-warning btn-sm">
+                                    Otkaži
+                                </button>
+                            </form>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (uloga == "Admin")
+    {
+        var smjestajiAdmina = ViewBag.SmjestajiAdmina as List<BookingMVC.Models.Smjestaj>;
+        var zauzetiTermini = ViewBag.ZauzetiTermini as List<BookingMVC.Models.Rezervacija>;
+
+        int mjesec = ViewBag.Mjesec;
+        int godina = ViewBag.Godina;
+        int daniUMjesecu = ViewBag.DaniUMjesecu;
+
+        var prethodniMjesec = mjesec == 1 ? 12 : mjesec - 1;
+        var prethodnaGodina = mjesec == 1 ? godina - 1 : godina;
+
+        var sljedeciMjesec = mjesec == 12 ? 1 : mjesec + 1;
+        var sljedecaGodina = mjesec == 12 ? godina + 1 : godina;
+
+        <hr />
+
+        <h3>Kalendar dostupnosti smještaja</h3>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a class="btn btn-outline-secondary"
+               asp-action="Index"
+               asp-route-mjesec="@prethodniMjesec"
+               asp-route-godina="@prethodnaGodina">
+                Prethodni mjesec
+            </a>
+
+            <h4>
+                @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mjesec).ToUpper()
+                @godina
+            </h4>
+
+            <a class="btn btn-outline-secondary"
+               asp-action="Index"
+               asp-route-mjesec="@sljedeciMjesec"
+               asp-route-godina="@sljedecaGodina">
+                Sljedeći mjesec
+            </a>
+        </div>
+
+        <table class="table table-bordered availability-calendar">
+            <thead>
+                <tr>
+                    <th>Smještaj</th>
+
+                    @for (int dan = 1; dan <= daniUMjesecu; dan++)
+                    {
+                        <th>@dan</th>
+                    }
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var smjestaj in smjestajiAdmina)
+                {
+                    <tr>
+                        <td>
+                            <strong>@smjestaj.Naziv</strong><br />
+                            <small>@smjestaj.Grad.Naziv</small>
+                        </td>
+
+                        @for (int dan = 1; dan <= daniUMjesecu; dan++)
+                        {
+                            var datum = new DateTime(godina, mjesec, dan);
+
+                            var rezervacijaDana = zauzetiTermini.FirstOrDefault(r =>
+                            r.IdSmjestaj == smjestaj.IdSmjestaj &&
+                            datum >= r.DatumPrijave.Date &&
+                            datum < r.DatumOdjave.Date);
+
+                            string cssKlasa = "";
+
+                            if (rezervacijaDana != null)
+                            {
+                                if (rezervacijaDana.IdStatus == 1)
+                                {
+                                    cssKlasa = "pending-day";
+                                }
+                                else if (rezervacijaDana.IdStatus == 2)
+                                {
+                                    cssKlasa = "confirmed-day";
+                                }
+                            }
+
+                            <td class="@cssKlasa"></td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="mt-3">
+            <span class="legend-box pending-day"></span> Na čekanju
+            <span class="legend-box confirmed-day ms-3"></span> Potvrđeno
+        </div>
+    }
+}
