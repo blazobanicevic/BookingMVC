@@ -230,5 +230,49 @@ namespace BookingMVC.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public IActionResult Availability(int idSmjestaj, int mjesec, int godina)
+        {
+            int daniUMjesecu = DateTime.DaysInMonth(godina, mjesec);
+
+            var rezervacije = _context.Rezervacije
+                .Where(r =>
+                    r.IdSmjestaj == idSmjestaj &&
+                    (r.IdStatus == 1 || r.IdStatus == 2) &&
+                    r.DatumPrijave.Year == godina &&
+                    r.DatumPrijave.Month == mjesec)
+                .ToList();
+
+            var dani = new List<object>();
+
+            for (int dan = 1; dan <= daniUMjesecu; dan++)
+            {
+                var datum = new DateTime(godina, mjesec, dan);
+
+                var rezervacijaDana = rezervacije.FirstOrDefault(r =>
+                    datum >= r.DatumPrijave.Date &&
+                    datum < r.DatumOdjave.Date);
+
+                string status = "slobodno";
+
+                if (rezervacijaDana != null)
+                {
+                    if (rezervacijaDana.IdStatus == 1)
+                        status = "naCekanju";
+
+                    if (rezervacijaDana.IdStatus == 2)
+                        status = "zauzeto";
+                }
+
+                dani.Add(new
+                {
+                    Dan = dan,
+                    Status = status
+                });
+            }
+
+            return Json(dani);
+        }
     }
 }

@@ -398,3 +398,94 @@ body {
 .clearNotificationsButton:hover {
     text-decoration: underline;
 }
+
+.reservation-availability {
+    margin: 20px 0;
+    padding: 16px;
+    border-radius: 14px;
+    background: #f7f8fd;
+}
+
+    .reservation-availability h5 {
+        margin-bottom: 12px;
+        font-weight: 800;
+        color: #202033;
+    }
+
+.reservation-calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: 800;
+}
+
+    .reservation-calendar-header button {
+        border: none;
+        border-radius: 8px;
+        background: #512da8;
+        color: white;
+        width: 32px;
+        height: 32px;
+        font-weight: bold;
+    }
+
+.reservation-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.reservation-day {
+    height: 34px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.free-day {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.pending-day {
+    background: #fed7aa;
+    color: #9a3412;
+}
+
+.busy-day {
+    background: #fecaca;
+    color: #991b1b;
+}
+
+.reservation-legend {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.free-box,
+.pending-box,
+.busy-box {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    margin-left: 10px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.free-box {
+    background: #d1fae5;
+}
+
+.pending-box {
+    background: #fed7aa;
+}
+
+.busy-box {
+    background: #fecaca;
+}

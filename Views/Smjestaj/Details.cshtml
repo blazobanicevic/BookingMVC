@@ -90,6 +90,24 @@
                     <input id="datumOdjave" name="datumOdjave" type="date" onchange="calculateReservation()" required />
                 </div>
 
+                <div class="reservation-availability">
+                    <h5>Dostupnost</h5>
+
+                    <div class="reservation-calendar-header">
+                        <button type="button" onclick="changeAvailabilityMonth(-1)">‹</button>
+                        <span id="availabilityMonthTitle"></span>
+                        <button type="button" onclick="changeAvailabilityMonth(1)">›</button>
+                    </div>
+
+                    <div id="availabilityCalendar" class="reservation-calendar"></div>
+
+                    <div class="reservation-legend">
+                        <span class="free-box"></span> Slobodno
+                        <span class="pending-box"></span> Na čekanju
+                        <span class="busy-box"></span> Zauzeto
+                    </div>
+                </div>
+
                 <div class="reservation-summary">
                     <p><strong>Broj osoba:</strong> @Model.BrojOsoba</p>
                     <p><strong>Broj noćenja:</strong> <span id="brojNocenja">0</span></p>
@@ -109,10 +127,66 @@
 }
 
 <script>
+    let availabilityMonth = new Date().getMonth() + 1;
+    let availabilityYear = new Date().getFullYear();
+
+    function loadAvailabilityCalendar() {
+        fetch(`/Rezervacija/Availability?idSmjestaj=@Model.IdSmjestaj&mjesec=${availabilityMonth}&godina=${availabilityYear}`)
+            .then(response => response.json())
+            .then(days => {
+                const calendar = document.getElementById("availabilityCalendar");
+                const title = document.getElementById("availabilityMonthTitle");
+
+                calendar.innerHTML = "";
+
+                const monthName = new Date(availabilityYear, availabilityMonth - 1)
+                    .toLocaleString("default", { month: "long" });
+
+                title.innerText = `${monthName} ${availabilityYear}`;
+
+                days.forEach(day => {
+                    const cell = document.createElement("div");
+                    cell.classList.add("reservation-day");
+
+                    if (day.status === "slobodno") {
+                        cell.classList.add("free-day");
+                    }
+
+                    if (day.status === "naCekanju") {
+                        cell.classList.add("pending-day");
+                    }
+
+                    if (day.status === "zauzeto") {
+                        cell.classList.add("busy-day");
+                    }
+
+                    cell.innerText = day.dan;
+                    calendar.appendChild(cell);
+                });
+            });
+    }
+
+    function changeAvailabilityMonth(change) {
+        availabilityMonth += change;
+
+        if (availabilityMonth < 1) {
+            availabilityMonth = 12;
+            availabilityYear--;
+        }
+
+        if (availabilityMonth > 12) {
+            availabilityMonth = 1;
+            availabilityYear++;
+        }
+
+        loadAvailabilityCalendar();
+    }
+
     const cijenaPoNoci = @Model.CijenaPoNoci.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
     function openReservationModal() {
         document.getElementById("reservationBackdrop").classList.remove("d-none");
+        loadAvailabilityCalendar();
     }
 
     function closeReservationModal() {
