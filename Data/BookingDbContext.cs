@@ -84,6 +84,12 @@ namespace BookingMVC.Data
                     tb.HasTrigger("trg_AfterInsertRecenzija");
                 });
 
+            modelBuilder.Entity<Smjestaj>()
+                .ToTable("Smjestaji", tb =>
+                {
+                    tb.HasTrigger("trg_InsteadOfUpdateSmjestajAktivan");
+                });
+
             foreach (var foreignKey in modelBuilder.Model.GetEntityTypes()
                          .SelectMany(e => e.GetForeignKeys()))
             {
