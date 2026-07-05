@@ -2,60 +2,94 @@
     ViewData["Title"] = "Detaljna pretraga";
 }
 
-<div class="card shadow-sm p-4" style="max-width: 330px;">
-    <h4 class="mb-4">Filtriraj smještaje</h4>
+<div class="advanced-search-page">
 
-    <form asp-controller="Smjestaj" asp-action="AdvancedSearchResults" method="get">
+    <div class="advanced-search-hero">
+        <h1>Detaljna pretraga</h1>
+        <p>Pronađi smještaj po gradu, tipu, broju osoba, datumu i cijeni.</p>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Grad</label>
-            <input class="form-control" type="text" name="grad" placeholder="Unesi grad" />
-        </div>
+    <div class="advanced-search-card">
 
-        <div class="mb-3">
-            <label class="form-label">Tip smještaja</label>
-            <select class="form-select" name="idTip">
-                <option value="">Svi tipovi</option>
-                @foreach (var tip in ViewBag.Tipovi)
-                {
-                    <option value="@tip.IdTipSmjestaja">@tip.Naziv</option>
-                }
-            </select>
-        </div>
+        <form asp-controller="Smjestaj" asp-action="AdvancedSearchResults" method="get">
 
-        <div class="mb-3">
-            <label class="form-label">Broj osoba</label>
-            <input class="form-control" type="number" name="brojOsoba" min="1" placeholder="Broj osoba" />
-        </div>
+            <div class="advanced-search-grid">
 
-        <div class="mb-3">
-            <label class="form-label">Datum prijave</label>
-            <input class="form-control" type="date" name="datumPrijave" />
-        </div>
+                <div class="search-field">
+                    <label>Grad</label>
+                    <input type="text" name="grad" placeholder="Unesi grad" />
+                </div>
 
-        <div class="mb-3">
-            <label class="form-label">Datum odjave</label>
-            <input class="form-control" type="date" name="datumOdjave" />
-        </div>
+                <div class="search-field">
+                    <label>Tip smještaja</label>
+                    <select name="idTip">
+                        <option value="">Svi tipovi</option>
+                        @foreach (var tip in ViewBag.Tipovi)
+                        {
+                            <option value="@tip.IdTipSmjestaja">@tip.Naziv</option>
+                        }
+                    </select>
+                </div>
 
-        <div class="mb-3">
-            <label class="form-label">Minimalna cijena: <span id="minValue">0</span> €</label>
-            <input class="form-range" type="range" name="minCijena" min="0" max="1000" value="0"
-                   oninput="document.getElementById('minValue').innerText = this.value" />
-        </div>
+                <div class="search-field">
+                    <label>Broj osoba</label>
+                    <input type="number" name="brojOsoba" min="1" placeholder="Broj osoba" />
+                </div>
 
-        <div class="mb-4">
-            <label class="form-label">Maksimalna cijena: <span id="maxValue">1000</span> €</label>
-            <input class="form-range" type="range" name="maxCijena" min="0" max="1000" value="1000"
-                   oninput="document.getElementById('maxValue').innerText = this.value" />
-        </div>
+                <div class="search-field">
+                    <label>Datum prijave</label>
+                    <input type="date" name="datumPrijave" />
+                </div>
 
-        <button type="submit" class="btn btn-primary w-100">
-            Primijeni filtere
-        </button>
-    </form>
+                <div class="search-field">
+                    <label>Datum odjave</label>
+                    <input type="date" name="datumOdjave" />
+                </div>
 
-    <a asp-controller="Smjestaj" asp-action="AdvancedSearch" class="btn btn-link mt-3">
-        Očisti sve
-    </a>
+                <div class="price-filter">
+                    <div class="price-box">
+                        <label>Minimalna cijena</label>
+                        <div class="price-value">
+                            <span id="minValue">0</span> €
+                        </div>
+
+                        <input type="range"
+                               name="minCijena"
+                               min="0"
+                               max="1000"
+                               value="0"
+                               oninput="document.getElementById('minValue').innerText = this.value" />
+                    </div>
+
+                    <div class="price-box">
+                        <label>Maksimalna cijena</label>
+                        <div class="price-value">
+                            <span id="maxValue">1000</span> €
+                        </div>
+
+                        <input type="range"
+                               name="maxCijena"
+                               min="0"
+                               max="1000"
+                               value="1000"
+                               oninput="document.getElementById('maxValue').innerText = this.value" />
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="advanced-search-actions">
+                <button type="submit">
+                    Primijeni filtere
+                </button>
+
+                <a asp-controller="Smjestaj" asp-action="AdvancedSearch">
+                    Očisti sve
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
 </div>
