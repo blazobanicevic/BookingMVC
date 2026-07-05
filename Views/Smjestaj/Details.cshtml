@@ -4,151 +4,194 @@
     ViewData["Title"] = "Detalji smještaja";
     var uloga = Context.Session.GetString("Uloga");
     bool uListiZelja = (bool)(ViewBag.UListiZelja ?? false);
-}
 
-<h2>@Model.Naziv</h2>
-
-<p><strong>Opis:</strong> @(string.IsNullOrWhiteSpace(Model.Opis) ? "-" : Model.Opis)</p>
-<p><strong>Grad:</strong> @Model.Grad.Naziv</p>
-<p><strong>Adresa:</strong> @Model.Adresa</p>
-<p><strong>Tip:</strong> @Model.TipSmjestaja.Naziv</p>
-<p><strong>Broj osoba:</strong> @Model.BrojOsoba</p>
-<p><strong>Cijena:</strong> @Model.CijenaPoNoci € / noć</p>
-<p><strong>Izdavalac:</strong> @Model.Admin.Ime @Model.Admin.Prezime</p>
-
-@if (TempData["ReservationSuccess"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["ReservationSuccess"]
-    </div>
-}
-
-@if (TempData["ReservationError"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["ReservationError"]
-    </div>
-}
-
-@if (uloga == "Korisnik")
-{
-    <hr />
-
-    @if (uListiZelja)
-    {
-        <a asp-controller="ListaZelja"
-           asp-action="Toggle"
-           asp-route-idSmjestaj="@Model.IdSmjestaj"
-           class="btn btn-danger">
-            Ukloni iz liste želja
-        </a>
-    }
-    else
-    {
-        <a asp-controller="ListaZelja"
-           asp-action="Toggle"
-           asp-route-idSmjestaj="@Model.IdSmjestaj"
-           class="btn btn-outline-danger">
-            Dodaj u listu želja
-        </a>
-    }
-
-    <button type="button" class="btn btn-primary" onclick="openReservationModal()">
-        Rezerviši
-    </button>
-
-    <a href="#" onclick="openMessagesWith(@Model.IdAdmin); return false;" class="btn btn-outline-secondary"> Pošalji poruku izdavaocu</a>
-}
-
-<hr />
-
-<h3>Recenzije</h3>
-
-@if (TempData["ReviewSuccess"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["ReviewSuccess"]
-    </div>
-}
-
-@if (TempData["ReviewError"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["ReviewError"]
-    </div>
-}
-
-@{
     var recenzije = ViewBag.Recenzije as List<BookingMVC.Models.Recenzija>;
     bool mozeOstavitiRecenziju = (bool)(ViewBag.MozeOstavitiRecenziju ?? false);
     bool vecOstavioRecenziju = (bool)(ViewBag.VecOstavioRecenziju ?? false);
 }
 
-@if (uloga == "Korisnik" && mozeOstavitiRecenziju && !vecOstavioRecenziju)
-{
-    <form asp-controller="Recenzija" asp-action="Create" method="post">
-        <input type="hidden" name="idSmjestaj" value="@Model.IdSmjestaj" />
+<div class="details-page">
 
-        <div class="mb-3">
-            <label>Ocjena</label>
-            <select name="ocjena" class="form-select" required>
-                <option value="5">5 - Odlično</option>
-                <option value="4">4 - Vrlo dobro</option>
-                <option value="3">3 - Dobro</option>
-                <option value="2">2 - Loše</option>
-                <option value="1">1 - Veoma loše</option>
-            </select>
+    <section class="details-hero">
+
+        <div class="details-image">
+            🏨
         </div>
 
-        <div class="mb-3">
-            <label>Komentar</label>
-            <textarea name="komentar" class="form-control" required></textarea>
-        </div>
+        <div class="details-info">
+            <span class="details-type">@Model.TipSmjestaja.Naziv</span>
 
-        <button class="btn btn-primary">Ostavi recenziju</button>
-    </form>
-}
+            <h1>@Model.Naziv</h1>
 
-@if (recenzije == null || !recenzije.Any())
-{
-    <p>Nema recenzija za ovaj smještaj.</p>
-}
-else
-{
-    <div class="review-card">
+            <p class="details-location">
+                📍 @Model.Grad.Naziv, @Model.Adresa
+            </p>
 
-        @for (int i = 0; i < recenzije.Count; i++)
-        {
-            var r = recenzije[i];
+            <p class="details-description">
+                @(string.IsNullOrWhiteSpace(Model.Opis) ? "Opis nije dostupan." : Model.Opis)
+            </p>
 
-            <div class="review-item">
-                <div class="review-header">
-                    <strong>@r.Korisnik.Ime @r.Korisnik.Prezime</strong>
-
-                    <div class="review-stars">
-                        @for (int j = 0; j < r.Ocjena; j++)
-                        {
-                            <span>★</span>
-                        }
-
-                        @for (int j = r.Ocjena; j < 5; j++)
-                        {
-                            <span class="review-star-empty">★</span>
-                        }
-                    </div>
+            <div class="details-meta">
+                <div>
+                    <strong>@Model.BrojOsoba</strong>
+                    <span>osoba</span>
                 </div>
 
-                <p class="review-comment">@r.Komentar</p>
+                <div>
+                    <strong>@Model.CijenaPoNoci €</strong>
+                    <span>po noći</span>
+                </div>
+
+                <div>
+                    <strong>@Model.Admin.Ime @Model.Admin.Prezime</strong>
+                    <span>izdavalac</span>
+                </div>
             </div>
 
-            @if (i != recenzije.Count - 1)
+            @if (TempData["ReservationSuccess"] != null)
             {
-                <hr class="review-divider" />
+                <div class="alert alert-success mt-3">
+                    @TempData["ReservationSuccess"]
+                </div>
             }
+
+            @if (TempData["ReservationError"] != null)
+            {
+                <div class="alert alert-danger mt-3">
+                    @TempData["ReservationError"]
+                </div>
+            }
+
+            @if (uloga == "Korisnik")
+            {
+                <div class="details-actions">
+
+                    @if (uListiZelja)
+                    {
+                        <a asp-controller="ListaZelja"
+                           asp-action="Toggle"
+                           asp-route-idSmjestaj="@Model.IdSmjestaj"
+                           class="details-btn danger">
+                            Ukloni iz liste želja
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="ListaZelja"
+                           asp-action="Toggle"
+                           asp-route-idSmjestaj="@Model.IdSmjestaj"
+                           class="details-btn outline-danger">
+                            Dodaj u listu želja
+                        </a>
+                    }
+
+                    <button type="button"
+                            class="details-btn primary"
+                            onclick="openReservationModal()">
+                        Rezerviši
+                    </button>
+
+                    <a href="#"
+                       onclick="openMessagesWith(@Model.IdAdmin); return false;"
+                       class="details-btn secondary">
+                        Pošalji poruku
+                    </a>
+
+                </div>
+            }
+        </div>
+
+    </section>
+
+    <section class="details-reviews">
+
+        <h2>Recenzije</h2>
+
+        @if (TempData["ReviewSuccess"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["ReviewSuccess"]
+            </div>
         }
 
-    </div>
-}
+        @if (TempData["ReviewError"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ReviewError"]
+            </div>
+        }
+
+        @if (uloga == "Korisnik" && mozeOstavitiRecenziju && !vecOstavioRecenziju)
+        {
+            <form asp-controller="Recenzija" asp-action="Create" method="post" class="review-form">
+                <input type="hidden" name="idSmjestaj" value="@Model.IdSmjestaj" />
+
+                <div class="mb-3">
+                    <label>Ocjena</label>
+                    <select name="ocjena" class="form-select" required>
+                        <option value="5">5 - Odlično</option>
+                        <option value="4">4 - Vrlo dobro</option>
+                        <option value="3">3 - Dobro</option>
+                        <option value="2">2 - Loše</option>
+                        <option value="1">1 - Veoma loše</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label>Komentar</label>
+                    <textarea name="komentar" class="form-control" required></textarea>
+                </div>
+
+                <button class="details-btn primary">
+                    Ostavi recenziju
+                </button>
+            </form>
+        }
+
+        @if (recenzije == null || !recenzije.Any())
+        {
+            <p class="empty-reviews">Nema recenzija za ovaj smještaj.</p>
+        }
+        else
+        {
+            <div class="review-card">
+
+                @for (int i = 0; i < recenzije.Count; i++)
+                {
+                    var r = recenzije[i];
+
+                    <div class="review-item">
+                        <div class="review-header">
+                            <strong>@r.Korisnik.Ime @r.Korisnik.Prezime</strong>
+
+                            <div class="review-stars">
+                                @for (int j = 0; j < r.Ocjena; j++)
+                                {
+                                    <span>★</span>
+                                }
+
+                                @for (int j = r.Ocjena; j < 5; j++)
+                                {
+                                    <span class="review-star-empty">★</span>
+                                }
+                            </div>
+                        </div>
+
+                        <p class="review-comment">@r.Komentar</p>
+                    </div>
+
+                    @if (i != recenzije.Count - 1)
+                    {
+                        <hr class="review-divider" />
+                    }
+                }
+
+            </div>
+        }
+
+    </section>
+
+</div>
 
 @if (uloga == "Korisnik")
 {

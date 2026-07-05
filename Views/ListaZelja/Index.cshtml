@@ -4,44 +4,90 @@
     ViewData["Title"] = "Lista želja";
 }
 
-<h2>Moja lista želja</h2>
+<div class="search-results-page">
 
-@if (!Model.Any())
-{
-    <p>Nemate nijedan smještaj u listi želja.</p>
-}
-else
-{
-    <div class="row">
-        @foreach (var stavka in Model)
-        {
-            <div class="col-md-4 mb-3">
+    <div class="results-hero">
+        <h1>Moja lista želja</h1>
+        <p>Smještaji koje si sačuvao/la za kasnije.</p>
+    </div>
 
-                <div class="card h-100">
+    @if (!Model.Any())
+    {
+        <div class="no-results">
+            <h3>Lista želja je prazna</h3>
+            <p>Trenutno nemaš nijedan smještaj u listi želja.</p>
 
-                    <div class="card-body">
+            <a asp-controller="Smjestaj"
+               asp-action="AdvancedSearch"
+               class="btn-back">
+                Pronađi smještaj
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="offers-grid">
+            @foreach (var stavka in Model)
+            {
+                <div class="offer-card">
 
-                        <h4>@stavka.Smjestaj.Naziv</h4>
+                    <div class="offer-image">
+                        ❤️
+                    </div>
 
-                        <p class="description">
-                            <strong>Opis:</strong>
-                            @(string.IsNullOrWhiteSpace(stavka.Smjestaj.Opis) ? "-" : stavka.Smjestaj.Opis)
+                    <div class="offer-content">
+                        <h3>@stavka.Smjestaj.Naziv</h3>
+
+                        <p class="offer-location">
+                            📍 @stavka.Smjestaj.Grad.Naziv
                         </p>
-                        <p><strong>Grad:</strong> @stavka.Smjestaj.Grad.Naziv</p>
-                        <p><strong>Adresa:</strong> @stavka.Smjestaj.Adresa</p>
-                        <p><strong>Tip:</strong> @stavka.Smjestaj.TipSmjestaja.Naziv</p>
-                        <p><strong>Broj osoba:</strong> @stavka.Smjestaj.BrojOsoba</p>
-                        <p><strong>Cijena:</strong> @stavka.Smjestaj.CijenaPoNoci € / noć</p>
 
-                        <a asp-controller="Smjestaj" asp-action="Details" asp-route-id="@stavka.Smjestaj.IdSmjestaj" class="btn btn-primary"> Detalji</a>
+                        <p class="offer-description">
+                            @(string.IsNullOrWhiteSpace(stavka.Smjestaj.Opis)
+                                                ? "Opis nije dostupan."
+                                                : stavka.Smjestaj.Opis)
+                </p>
 
-                        <a asp-action="Remove" asp-route-id="@stavka.IdListaZelja" class="btn btn-danger"> Ukloni</a>
+                        <div class="offer-details">
+                            <div>
+                                <strong>Tip</strong>
+                                <span>@stavka.Smjestaj.TipSmjestaja.Naziv</span>
+                            </div>
 
+                            <div>
+                                <strong>Osoba</strong>
+                                <span>@stavka.Smjestaj.BrojOsoba</span>
+                            </div>
+                        </div>
+
+                        <div class="offer-bottom">
+                            <div>
+                                <strong class="price">
+                                    @stavka.Smjestaj.CijenaPoNoci €
+                                </strong>
+                                <small>/ noć</small>
+                            </div>
+
+                            <div class="wishlist-actions">
+                                <a asp-controller="Smjestaj"
+                                   asp-action="Details"
+                                   asp-route-id="@stavka.Smjestaj.IdSmjestaj"
+                                   class="details-btn">
+                                    Detalji
+                                </a>
+
+                                <a asp-action="Remove"
+                                   asp-route-id="@stavka.IdListaZelja"
+                                   class="remove-btn">
+                                    Ukloni
+                                </a>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
+                }
+        </div>
+    }
 
-            </div>
-        }
-    </div>
-}
+</div>
