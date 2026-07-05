@@ -4,40 +4,95 @@
     ViewData["Title"] = "Rezultati pretrage";
 }
 
-<h2>Rezultati pretrage</h2>
+<div class="search-results-page">
 
-@if (!Model.Any())
-{
-    <p>Nema smještaja koji odgovaraju pretrazi.</p>
-}
-else
-{
-    <div class="row">
-        @foreach (var smjestaj in Model)
-        {
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-body d-flex flex-column">
-                        <h4>@smjestaj.Naziv</h4>
-                        <p class="description">
-                            <strong>Opis:</strong>
-                            @(string.IsNullOrWhiteSpace(smjestaj.Opis) ? "-" : smjestaj.Opis)
-                        </p>
-                        <p><strong>Grad:</strong> @smjestaj.Grad.Naziv</p>
-                        <p><strong>Adresa:</strong> @smjestaj.Adresa</p>
-                        <p><strong>Tip:</strong> @smjestaj.TipSmjestaja.Naziv</p>
-                        <p><strong>Broj osoba:</strong> @smjestaj.BrojOsoba</p>
-                        <p><strong>Cijena:</strong> @smjestaj.CijenaPoNoci € / noć</p>
+    <div class="results-hero">
+        <h1>Rezultati pretrage</h1>
 
-                        <a asp-controller="Smjestaj"
-                           asp-action="Details"
-                           asp-route-id="@smjestaj.IdSmjestaj"
-                           class="btn btn-primary">
-                            Detalji
-                        </a>
-                    </div>
-                </div>
-            </div>
-        }
+        <p>
+            Pronađeno <strong>@Model.Count</strong>
+            @(Model.Count == 1 ? "smještaj" : "smještaja")
+        </p>
     </div>
-}
+
+    @if (!Model.Any())
+    {
+        <div class="no-results">
+            <h3>Nema rezultata</h3>
+            <p>Nijedan smještaj ne odgovara zadatim kriterijumima.</p>
+
+            <a asp-controller="Smjestaj"
+               asp-action="AdvancedSearch"
+               class="btn-back">
+                Nazad na pretragu
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="offers-grid">
+
+            @foreach (var smjestaj in Model)
+            {
+                <div class="offer-card">
+
+                    <div class="offer-image">
+                        🏨
+                    </div>
+
+                    <div class="offer-content">
+
+                        <h3>@smjestaj.Naziv</h3>
+
+                        <p class="offer-location">
+                            📍 @smjestaj.Grad.Naziv
+                        </p>
+
+                        <p class="offer-description">
+                            @(string.IsNullOrWhiteSpace(smjestaj.Opis)
+                                                ? "Opis nije dostupan."
+                                                : smjestaj.Opis)
+                </p>
+
+                        <div class="offer-details">
+
+                            <div>
+                                <strong>Tip</strong>
+                                <span>@smjestaj.TipSmjestaja.Naziv</span>
+                            </div>
+
+                            <div>
+                                <strong>Osoba</strong>
+                                <span>@smjestaj.BrojOsoba</span>
+                            </div>
+
+                        </div>
+
+                        <div class="offer-bottom">
+
+                            <div>
+                                <strong class="price">
+                                    @smjestaj.CijenaPoNoci €
+                                </strong>
+
+                                <small>/ noć</small>
+                            </div>
+
+                            <a asp-controller="Smjestaj"
+                               asp-action="Details"
+                               asp-route-id="@smjestaj.IdSmjestaj"
+                               class="details-btn">
+                                Detalji
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                }
+
+        </div>
+    }
+
+</div>
