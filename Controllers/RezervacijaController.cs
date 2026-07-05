@@ -24,9 +24,17 @@ namespace BookingMVC.Controllers
 
             int idKorisnik = HttpContext.Session.GetInt32("IdKorisnik").Value;
 
-            bool zauzeto = _context.Rezervacije.Any(r => r.IdSmjestaj == idSmjestaj && (r.IdStatus == 1 || r.IdStatus == 2) && datumPrijave < r.DatumOdjave && datumOdjave > r.DatumPrijave);
+            bool dostupan = _context.Database
+                .SqlQueryRaw<bool>(
+                    "SELECT CAST(dbo.fn_SmjestajDostupan({0}, {1}, {2}) AS bit) AS Value",
+                    idSmjestaj,
+                    datumPrijave,
+                    datumOdjave
+                )
+                .AsEnumerable()
+                .First();
 
-            if (zauzeto)
+            if (!dostupan)
             {
                 TempData["ReservationError"] = "Smještaj nije dostupan za odabrani period.";
                 return RedirectToAction("Details", "Smjestaj", new { id = idSmjestaj });
