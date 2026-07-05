@@ -139,7 +139,7 @@ namespace BookingMVC.Controllers
                 .ToList());
         }
 
-        //1-Na cekanju, 2-potvrdjena, 3-dobijena, 4-otkazana, 5-istekla
+        //1-Na cekanju, 2-potvrdjena, 3-odbijena, 4-otkazana, 5-istekla
 
         [HttpPost]
         public IActionResult Confirm(int idRezervacija)

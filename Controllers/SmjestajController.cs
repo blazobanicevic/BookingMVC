@@ -238,6 +238,31 @@ namespace BookingMVC.Controllers
                     lz.IdSmjestaj == id);
             }
 
+            var recenzije = _context.Recenzije
+                .Include(r => r.Korisnik)
+                .Where(r => r.IdSmjestaj == id)
+                .ToList();
+
+            ViewBag.Recenzije = recenzije;
+
+            if (HttpContext.Session.GetString("Uloga") == "Korisnik")
+            {
+                int idKorisnik = HttpContext.Session.GetInt32("IdKorisnik").Value;
+
+                bool mozeOstavitiRecenziju = _context.Rezervacije.Any(r =>
+                    r.IdKorisnik == idKorisnik &&
+                    r.IdSmjestaj == id &&
+                    r.IdStatus == 2 &&
+                    r.DatumOdjave.Date < DateTime.Today);
+
+                bool vecOstavioRecenziju = _context.Recenzije.Any(r =>
+                    r.IdKorisnik == idKorisnik &&
+                    r.IdSmjestaj == id);
+
+                ViewBag.MozeOstavitiRecenziju = mozeOstavitiRecenziju;
+                ViewBag.VecOstavioRecenziju = vecOstavioRecenziju;
+            }
+
             return View(smjestaj);
         }
     }

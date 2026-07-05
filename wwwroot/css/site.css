@@ -489,3 +489,50 @@ body {
 .busy-box {
     background: #fecaca;
 }
+
+.review-card {
+    border: 1px solid #dcdcdc;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    margin-top: 15px;
+}
+
+.review-item {
+    padding: 18px;
+}
+
+.review-divider {
+    margin: 0;
+    border: none;
+    border-top: 1px solid #000000;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+    .review-header strong {
+        font-size: 15px;
+    }
+
+.review-stars {
+    color: #f4b400;
+    font-size: 20px;
+    letter-spacing: 2px;
+}
+
+.review-star-empty {
+    color: #d6d6d6;
+}
+
+.review-comment {
+    margin: 0;
+    color: #555;
+    line-height: 1.6;
+    font-size: 15px;
+}
+

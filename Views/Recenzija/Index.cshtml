@@ -1,0 +1,62 @@
+﻿@model List<BookingMVC.Models.Recenzija>
+
+@{
+    ViewData["Title"] = "Recenzije";
+}
+
+<h2>Recenzije</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Još uvijek nemate nijednu recenziju.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Smještaj</th>
+                <th>Grad</th>
+                <th>Korisnik</th>
+                <th>Ocjena</th>
+                <th>Komentar</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var recenzija in Model)
+            {
+                <tr>
+
+                    <td>@recenzija.Smjestaj.Naziv</td>
+
+                    <td>@recenzija.Smjestaj.Grad.Naziv</td>
+
+                    <td>
+                        @recenzija.Korisnik.Ime
+                        @recenzija.Korisnik.Prezime
+                    </td>
+
+                    <td>
+                        @for (int i = 0; i < recenzija.Ocjena; i++)
+                        {
+                            <span style="color:gold;font-size:18px;">★</span>
+                        }
+
+                        @for (int i = recenzija.Ocjena; i < 5; i++)
+                        {
+                            <span style="color:lightgray;font-size:18px;">★</span>
+                        }
+                    </td>
+
+                    <td>@recenzija.Komentar</td>
+
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}

@@ -60,6 +60,96 @@
     <a href="#" onclick="openMessagesWith(@Model.IdAdmin); return false;" class="btn btn-outline-secondary"> Pošalji poruku izdavaocu</a>
 }
 
+<hr />
+
+<h3>Recenzije</h3>
+
+@if (TempData["ReviewSuccess"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["ReviewSuccess"]
+    </div>
+}
+
+@if (TempData["ReviewError"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ReviewError"]
+    </div>
+}
+
+@{
+    var recenzije = ViewBag.Recenzije as List<BookingMVC.Models.Recenzija>;
+    bool mozeOstavitiRecenziju = (bool)(ViewBag.MozeOstavitiRecenziju ?? false);
+    bool vecOstavioRecenziju = (bool)(ViewBag.VecOstavioRecenziju ?? false);
+}
+
+@if (uloga == "Korisnik" && mozeOstavitiRecenziju && !vecOstavioRecenziju)
+{
+    <form asp-controller="Recenzija" asp-action="Create" method="post">
+        <input type="hidden" name="idSmjestaj" value="@Model.IdSmjestaj" />
+
+        <div class="mb-3">
+            <label>Ocjena</label>
+            <select name="ocjena" class="form-select" required>
+                <option value="5">5 - Odlično</option>
+                <option value="4">4 - Vrlo dobro</option>
+                <option value="3">3 - Dobro</option>
+                <option value="2">2 - Loše</option>
+                <option value="1">1 - Veoma loše</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label>Komentar</label>
+            <textarea name="komentar" class="form-control" required></textarea>
+        </div>
+
+        <button class="btn btn-primary">Ostavi recenziju</button>
+    </form>
+}
+
+@if (recenzije == null || !recenzije.Any())
+{
+    <p>Nema recenzija za ovaj smještaj.</p>
+}
+else
+{
+    <div class="review-card">
+
+        @for (int i = 0; i < recenzije.Count; i++)
+        {
+            var r = recenzije[i];
+
+            <div class="review-item">
+                <div class="review-header">
+                    <strong>@r.Korisnik.Ime @r.Korisnik.Prezime</strong>
+
+                    <div class="review-stars">
+                        @for (int j = 0; j < r.Ocjena; j++)
+                        {
+                            <span>★</span>
+                        }
+
+                        @for (int j = r.Ocjena; j < 5; j++)
+                        {
+                            <span class="review-star-empty">★</span>
+                        }
+                    </div>
+                </div>
+
+                <p class="review-comment">@r.Komentar</p>
+            </div>
+
+            @if (i != recenzije.Count - 1)
+            {
+                <hr class="review-divider" />
+            }
+        }
+
+    </div>
+}
+
 @if (uloga == "Korisnik")
 {
     <div id="reservationBackdrop" class="reservation-backdrop d-none">
