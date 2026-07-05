@@ -19,30 +19,19 @@ namespace BookingMVC.Controllers
         {
             int idKorisnik = HttpContext.Session.GetInt32("IdKorisnik").Value;
 
-            // Provjera da li korisnik ima zavrsenu i potvrdjenu rezervaciju
-            bool imaRezervaciju = _context.Rezervacije.Any(r =>
-                r.IdKorisnik == idKorisnik &&
-                r.IdSmjestaj == idSmjestaj &&
-                r.IdStatus == 2 &&
-                r.DatumOdjave.Date < DateTime.Today);
+            bool mozeOstavitiRecenziju = _context.Database
+                .SqlQueryRaw<bool>(
+                    "SELECT CAST(dbo.fn_KorisnikMozeOstavitiRecenziju({0}, {1}) AS bit) AS Value",
+                    idKorisnik,
+                    idSmjestaj
+                )
+                .AsEnumerable()
+                .First();
 
-            if (!imaRezervaciju)
+            if (!mozeOstavitiRecenziju)
             {
                 TempData["ReviewError"] =
-                    "Recenziju možete ostaviti samo nakon završene potvrđene rezervacije.";
-
-                return RedirectToAction("Details", "Smjestaj", new { id = idSmjestaj });
-            }
-
-            // Jedna recenzija po korisniku i smjestaju
-            bool vecPostoji = _context.Recenzije.Any(r =>
-                r.IdKorisnik == idKorisnik &&
-                r.IdSmjestaj == idSmjestaj);
-
-            if (vecPostoji)
-            {
-                TempData["ReviewError"] =
-                    "Već ste ostavili recenziju za ovaj smještaj.";
+                    "Recenziju možete ostaviti samo nakon završene potvrđene rezervacije i samo jednom po smještaju.";
 
                 return RedirectToAction("Details", "Smjestaj", new { id = idSmjestaj });
             }
