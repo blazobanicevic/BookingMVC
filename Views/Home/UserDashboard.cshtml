@@ -1,7 +1,60 @@
-﻿@{
+﻿@model List<BookingMVC.Models.Smjestaj>
+
+@{
     ViewData["Title"] = "User Dashboard";
 }
 
-<h2>Korisnički dashboard</h2>
+<div class="booking-dashboard">
 
-<p>Dobrodošao/la, @Context.Session.GetString("Ime")!</p>
+    <section class="dashboard-hero">
+        <div>
+            <h1>Dobrodošao/la, @Context.Session.GetString("Ime")!</h1>
+            <p>Pronađi smještaj koji odgovara tvom putovanju.</p>
+        </div>
+
+        <a class="hero-btn" asp-controller="Smjestaj" asp-action="AdvancedSearch">
+            Detaljna pretraga
+        </a>
+    </section>
+
+    <section class="offers-section">
+        <div class="section-title">
+            <h2>Preporučeni smještaji</h2>
+            <p>Pogledaj trenutno dostupne ponude.</p>
+        </div>
+
+        <div class="offers-grid">
+            @foreach (var smjestaj in Model)
+            {
+                <div class="offer-card">
+                    <div class="offer-image">
+                        <span>🏨</span>
+                    </div>
+
+                    <div class="offer-content">
+                        <h3>@smjestaj.Naziv</h3>
+
+                        <p class="offer-location">
+                            @smjestaj.Grad.Naziv
+                        </p>
+
+                        <p class="offer-info">
+                            @smjestaj.TipSmjestaja.Naziv · @smjestaj.BrojOsoba osoba
+                        </p>
+
+                        <div class="offer-bottom">
+                            <strong>@smjestaj.CijenaPoNoci € / noć</strong>
+
+                            <a asp-controller="Smjestaj"
+                               asp-action="Details"
+                               asp-route-id="@smjestaj.IdSmjestaj">
+                                Detalji
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+</div>
