@@ -4,59 +4,66 @@
     ViewData["Title"] = "Recenzije";
 }
 
-<h2>Recenzije</h2>
+<div class="search-results-page">
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">
-        Još uvijek nemate nijednu recenziju.
+    <div class="results-hero">
+        <h1>Recenzije</h1>
+        <p>Pregled svih recenzija ostavljenih za smještaje.</p>
     </div>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Smještaj</th>
-                <th>Grad</th>
-                <th>Korisnik</th>
-                <th>Ocjena</th>
-                <th>Komentar</th>
-            </tr>
-        </thead>
 
-        <tbody>
+    @if (!Model.Any())
+    {
+        <div class="no-results">
+            <h3>Nema recenzija</h3>
+            <p>Još uvijek nije ostavljena nijedna recenzija.</p>
+        </div>
+    }
+    else
+    {
+        <div class="reviews-grid">
 
             @foreach (var recenzija in Model)
             {
-                <tr>
+                <a class="review-box review-link"
+                   asp-controller="Smjestaj"
+                   asp-action="Details"
+                   asp-route-id="@recenzija.IdSmjestaj">
 
-                    <td>@recenzija.Smjestaj.Naziv</td>
+                    <div class="review-top">
 
-                    <td>@recenzija.Smjestaj.Grad.Naziv</td>
+                        <div>
+                            <h3>@recenzija.Smjestaj.Naziv</h3>
+                            <span>@recenzija.Smjestaj.Grad.Naziv</span>
+                        </div>
 
-                    <td>
-                        @recenzija.Korisnik.Ime
-                        @recenzija.Korisnik.Prezime
-                    </td>
+                        <div class="review-stars-big">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= recenzija.Ocjena)
+                                {
+                                    <span class="star-filled">★</span>
+                                }
+                                else
+                                {
+                                    <span class="star-empty">★</span>
+                                }
+                            }
+                        </div>
 
-                    <td>
-                        @for (int i = 0; i < recenzija.Ocjena; i++)
-                        {
-                            <span style="color:gold;font-size:18px;">★</span>
-                        }
+                    </div>
 
-                        @for (int i = recenzija.Ocjena; i < 5; i++)
-                        {
-                            <span style="color:lightgray;font-size:18px;">★</span>
-                        }
-                    </td>
+                    <div class="review-user">
+                        👤 @recenzija.Korisnik.Ime @recenzija.Korisnik.Prezime
+                    </div>
 
-                    <td>@recenzija.Komentar</td>
+                    <p class="review-text">
+                        @recenzija.Komentar
+                    </p>
 
-                </tr>
+                </a>
             }
 
-        </tbody>
-    </table>
-}
+        </div>
+    }
+
+</div>
