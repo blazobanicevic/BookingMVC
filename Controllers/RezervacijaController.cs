@@ -165,7 +165,10 @@ namespace BookingMVC.Controllers
                 return NotFound();
             }
 
-            rezervacija.IdStatus = 2;
+            _context.Database.ExecuteSqlRaw(
+                "EXEC dbo.sp_PotvrdiRezervaciju @p0",
+                idRezervacija
+            );
 
             _context.Notifikacije.Add(new Notifikacija
             {
