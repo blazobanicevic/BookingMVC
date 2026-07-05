@@ -99,12 +99,32 @@ namespace BookingMVC.Controllers
             return View(smjestaj);
         }
 
+        private bool ImaAktivneRezervacije(int idSmjestaj)
+        {
+            return _context.Rezervacije.Any(r =>
+                r.IdSmjestaj == idSmjestaj &&
+                (r.IdStatus == 1 || r.IdStatus == 2) &&
+                r.DatumOdjave.Date > DateTime.Today);
+        }
+
         [HttpPost]
         public IActionResult Edit(Models.Smjestaj smjestaj, string gradNaziv)
         {
             if (HttpContext.Session.GetString("Uloga") != "Admin")
             {
                 return RedirectToAction("UserDashboard", "Home");
+            }
+
+            var smjestajBaza = _context.Smjestaji.AsNoTracking()
+                .FirstOrDefault(s => s.IdSmjestaj == smjestaj.IdSmjestaj);
+
+            if (smjestajBaza != null && smjestajBaza.Aktivan && !smjestaj.Aktivan)
+            {
+                if (ImaAktivneRezervacije(smjestaj.IdSmjestaj))
+                {
+                    TempData["Error"] = "Smještaj nije moguće deaktivirati jer ima rezervacije koje još nisu završene ili čekaju odluku.";
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             var grad = _context.Gradovi.FirstOrDefault(g => g.Naziv == gradNaziv);
@@ -127,6 +147,10 @@ namespace BookingMVC.Controllers
             _context.Smjestaji.Update(smjestaj);
             _context.SaveChanges();
 
+            TempData["Success"] = smjestaj.Aktivan
+                ? "Smještaj je uspješno aktiviran/izmijenjen."
+                : "Smještaj je uspješno deaktiviran.";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -139,11 +163,46 @@ namespace BookingMVC.Controllers
 
             var smjestaj = _context.Smjestaji.Find(id);
 
-            if (smjestaj != null)
+            if (smjestaj == null)
             {
-                _context.Smjestaji.Remove(smjestaj);
-                _context.SaveChanges();
+                return NotFound();
             }
+
+            if (ImaAktivneRezervacije(id))
+            {
+                TempData["Error"] = "Smještaj nije moguće obrisati jer ima rezervacije koje još nisu završene ili čekaju odluku.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var rezervacije = _context.Rezervacije
+                .Where(r => r.IdSmjestaj == id)
+                .ToList();
+
+            _context.Rezervacije.RemoveRange(rezervacije);
+
+            var recenzije = _context.Recenzije
+                .Where(r => r.IdSmjestaj == id)
+                .ToList();
+
+            _context.Recenzije.RemoveRange(recenzije);
+
+            var listeZelja = _context.ListaZelja
+                .Where(l => l.IdSmjestaj == id)
+                .ToList();
+
+            _context.ListaZelja.RemoveRange(listeZelja);
+
+            var smjestajSadrzaji = _context.SmjestajSadrzaji
+                .Where(ss => ss.IdSmjestaj == id)
+                .ToList();
+
+            _context.SmjestajSadrzaji.RemoveRange(smjestajSadrzaji);
+
+            _context.Smjestaji.Remove(smjestaj);
+
+            _context.SaveChanges();
+
+            TempData["Success"] = "Smještaj je uspješno obrisan.";
 
             return RedirectToAction(nameof(Index));
         }

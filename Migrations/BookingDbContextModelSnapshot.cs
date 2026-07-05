@@ -42,7 +42,7 @@ namespace BookingMVC.Migrations
 
                     b.HasKey("IdGrad");
 
-                    b.ToTable("Gradovi");
+                    b.ToTable("Gradovi", (string)null);
 
                     b.HasData(
                         new
@@ -112,7 +112,7 @@ namespace BookingMVC.Migrations
 
                     b.HasIndex("IdUloga");
 
-                    b.ToTable("Korisnici");
+                    b.ToTable("Korisnici", (string)null);
 
                     b.HasData(
                         new
@@ -146,7 +146,7 @@ namespace BookingMVC.Migrations
 
                     b.HasIndex("IdSmjestaj");
 
-                    b.ToTable("ListaZelja");
+                    b.ToTable("ListaZelja", (string)null);
                 });
 
             modelBuilder.Entity("BookingMVC.Models.Notifikacija", b =>
@@ -173,7 +173,7 @@ namespace BookingMVC.Migrations
 
                     b.HasIndex("IdKorisnik");
 
-                    b.ToTable("Notifikacije");
+                    b.ToTable("Notifikacije", (string)null);
                 });
 
             modelBuilder.Entity("BookingMVC.Models.Poruka", b =>
@@ -206,7 +206,7 @@ namespace BookingMVC.Migrations
 
                     b.HasIndex("IdPrimalac");
 
-                    b.ToTable("Poruke");
+                    b.ToTable("Poruke", (string)null);
                 });
 
             modelBuilder.Entity("BookingMVC.Models.Recenzija", b =>
@@ -236,7 +236,7 @@ namespace BookingMVC.Migrations
 
                     b.HasIndex("IdSmjestaj");
 
-                    b.ToTable("Recenzije");
+                    b.ToTable("Recenzije", (string)null);
                 });
 
             modelBuilder.Entity("BookingMVC.Models.Rezervacija", b =>
@@ -273,7 +273,7 @@ namespace BookingMVC.Migrations
 
                     b.HasIndex("IdStatus");
 
-                    b.ToTable("Rezervacije");
+                    b.ToTable("Rezervacije", (string)null);
                 });
 
             modelBuilder.Entity("BookingMVC.Models.Sadrzaj", b =>
@@ -291,7 +291,7 @@ namespace BookingMVC.Migrations
 
                     b.HasKey("IdSadrzaj");
 
-                    b.ToTable("Sadrzaji");
+                    b.ToTable("Sadrzaji", (string)null);
 
                     b.HasData(
                         new
@@ -373,7 +373,7 @@ namespace BookingMVC.Migrations
 
                     b.HasIndex("IdTip");
 
-                    b.ToTable("Smjestaji");
+                    b.ToTable("Smjestaji", (string)null);
                 });
 
             modelBuilder.Entity("BookingMVC.Models.SmjestajSadrzaj", b =>
@@ -388,7 +388,7 @@ namespace BookingMVC.Migrations
 
                     b.HasIndex("IdSadrzaj");
 
-                    b.ToTable("SmjestajSadrzaji");
+                    b.ToTable("SmjestajSadrzaji", (string)null);
                 });
 
             modelBuilder.Entity("BookingMVC.Models.StatusRezervacije", b =>
@@ -406,7 +406,7 @@ namespace BookingMVC.Migrations
 
                     b.HasKey("IdStatus");
 
-                    b.ToTable("StatusiRezervacija");
+                    b.ToTable("StatusiRezervacija", (string)null);
 
                     b.HasData(
                         new
@@ -446,7 +446,7 @@ namespace BookingMVC.Migrations
 
                     b.HasKey("IdTipSmjestaja");
 
-                    b.ToTable("TipoviSmjestaja");
+                    b.ToTable("TipoviSmjestaja", (string)null);
 
                     b.HasData(
                         new
@@ -486,7 +486,7 @@ namespace BookingMVC.Migrations
 
                     b.HasKey("IdUloga");
 
-                    b.ToTable("Uloge");
+                    b.ToTable("Uloge", (string)null);
 
                     b.HasData(
                         new
