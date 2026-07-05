@@ -10,138 +10,153 @@
     <link rel="stylesheet" href="~/BookingMVC.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BookingMVC</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+    @{
+        string controller = ViewContext.RouteData.Values["Controller"]?.ToString();
+        string action = ViewContext.RouteData.Values["Action"]?.ToString();
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-controller="Home"
-                               asp-action="Index">
-                                Home
-                            </a>
-                        </li>
+        bool hideNavbar =
+        (controller == "Home" && action == "Index")
+        || (controller == "Auth" && action == "Login")
+        || (controller == "Auth" && action == "Register");
+    }
+    @if (!hideNavbar)
+    {
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container-fluid">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BookingMVC</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
 
-                        <li class="nav-item">
-                            <form asp-controller="Smjestaj"
-                                  asp-action="Search"
-                                  method="get"
-                                  class="d-flex align-items-center">
-
-                                <div class="input-group">
-
-                                    <input class="form-control"
-                                           type="search"
-                                           name="search"
-                                           placeholder="Naziv smještaja ili grad..." />
-
-                                    <button class="btn btn-outline-primary" type="submit">
-                                        <i class="bi bi-search"></i>
-                                    </button>
-
-                                </div>
-
-                            </form>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark"
-                               asp-controller="Smjestaj"
-                               asp-action="AdvancedSearch">
-                                Detaljna pretraga
-                            </a>
-                        </li>
-
-                        @if (Context.Session.GetString("Uloga") == "Admin")
-                        {
                             <li class="nav-item">
                                 <a class="nav-link text-dark"
-                                   asp-controller="Smjestaj"
+                                   asp-controller="Home"
                                    asp-action="Index">
-                                    Smještaji
+                                    Home
                                 </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <form asp-controller="Smjestaj"
+                                      asp-action="Search"
+                                      method="get"
+                                      class="d-flex align-items-center">
+
+                                    <div class="input-group">
+
+                                        <input class="form-control"
+                                               type="search"
+                                               name="search"
+                                               placeholder="Naziv smještaja ili grad..." />
+
+                                        <button class="btn btn-outline-primary" type="submit">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+
+                                    </div>
+
+                                </form>
                             </li>
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark"
-                                   asp-controller="Rezervacija"
-                                   asp-action="Index">
-                                    Rezervacije
+                                   asp-controller="Smjestaj"
+                                   asp-action="AdvancedSearch">
+                                    Detaljna pretraga
                                 </a>
                             </li>
 
-                            <a class="nav-link text-dark"
-                               asp-controller="Recenzija"
-                               asp-action="Index">
-                                Recenzije
-                            </a>
-                        }
+                            @if (Context.Session.GetString("Uloga") == "Admin")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="Smjestaj"
+                                       asp-action="Index">
+                                        Smještaji
+                                    </a>
+                                </li>
 
-                        @if (Context.Session.GetString("Uloga") == "Korisnik")
-                        {
-                            <li class="nav-item">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="Rezervacija"
+                                       asp-action="Index">
+                                        Rezervacije
+                                    </a>
+                                </li>
+
                                 <a class="nav-link text-dark"
-                                   asp-controller="ListaZelja"
+                                   asp-controller="Recenzija"
                                    asp-action="Index">
-                                    Lista želja
+                                    Recenzije
                                 </a>
-                            </li>
+                            }
 
-                            <li class="nav-item">
-                                <a class="nav-link text-dark"
-                                   asp-controller="Rezervacija"
-                                   asp-action="Index">
-                                    Rezervacije
-                                </a>
-                            </li>
-                        }
+                            @if (Context.Session.GetString("Uloga") == "Korisnik")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="ListaZelja"
+                                       asp-action="Index">
+                                        Lista želja
+                                    </a>
+                                </li>
 
-                    </ul>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark"
+                                       asp-controller="Rezervacija"
+                                       asp-action="Index">
+                                        Rezervacije
+                                    </a>
+                                </li>
+                            }
 
-                    <ul class="navbar-nav">
-                        @if (Context.Session.GetInt32("IdKorisnik") != null)
-                        {
-                            <li class="nav-item">
-                                <span class="nav-link text-dark">
-                                    @Context.Session.GetString("Ime") (@Context.Session.GetString("Uloga"))
-                                </span>
-                            </li>
+                        </ul>
 
-                            <li class="nav-item">
-                                <a href="#"
-                                   id="notificationButton"
-                                   class="nav-link text-dark">
-                                    🔔
-                                </a>
-                            </li>
+                        <ul class="navbar-nav">
+                            @if (Context.Session.GetInt32("IdKorisnik") != null)
+                            {
+                                <li class="nav-item">
+                                    <span class="nav-link text-dark">
+                                        @Context.Session.GetString("Ime") (@Context.Session.GetString("Uloga"))
+                                    </span>
+                                </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Logout">Logout</a>
-                            </li>
-                        }
-                    </ul>
+                                <li class="nav-item">
+                                    <a href="#"
+                                       id="notificationButton"
+                                       class="nav-link text-dark">
+                                        🔔
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Auth" asp-action="Logout">Logout</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+            </nav>
+        </header>
+    }
+    @if (hideNavbar)
+    {
+        <main role="main">
             @RenderBody()
         </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
+    }
+    else
+    {
         <div class="container">
-            &copy; 2026 - BookingMVC
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
+    }
 
     @if (Context.Session.GetInt32("IdKorisnik") != null)
     {

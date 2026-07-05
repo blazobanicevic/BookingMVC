@@ -536,3 +536,127 @@ body {
     font-size: 15px;
 }
 
+/* LANDING PAGE */
+
+.landing-hero {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.88) 27%, rgba(255,255,255,0.35) 52%, rgba(255,255,255,0.05) 100%), url('/images/landing-bg.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.landing-topbar {
+    position: relative;
+    z-index: 2;
+    padding: 52px 72px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.landing-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #1456d9;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+    .landing-logo i {
+        font-size: 2.3rem;
+    }
+
+.landing-actions {
+    display: flex;
+    gap: 24px;
+}
+
+.landing-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 34px;
+    border-radius: 12px;
+    font-size: 1.35rem;
+    font-weight: 800;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.landing-btn-outline {
+    background: rgba(255,255,255,0.92);
+    color: #1456d9;
+    border: 2px solid #1456d9;
+    box-shadow: 0 12px 28px rgba(17, 54, 130, 0.12);
+}
+
+.landing-btn-primary {
+    background: #1456d9;
+    color: white;
+    border: 2px solid #1456d9;
+    box-shadow: 0 14px 30px rgba(20, 86, 217, 0.28);
+}
+
+.landing-btn:hover {
+    transform: translateY(-2px);
+}
+
+.landing-content {
+    position: relative;
+    z-index: 2;
+    padding-left: 70px;
+    padding-top: 250px;
+    width: 900px;
+}
+
+    .landing-content h1 {
+        font-size: 5.6rem;
+        line-height: 1.1;
+        font-weight: 900;
+        color: #12203a;
+        margin-bottom: 30px;
+        max-width: 900px;
+    }
+
+        .landing-content h1 span {
+            display: block;
+            color: #1456d9;
+        }
+
+    .landing-content p {
+        font-size: 1.75rem;
+        line-height: 1.55;
+        color: #5c6980;
+        font-weight: 500;
+    }
+
+@media (max-width: 900px) {
+    .landing-topbar {
+        padding: 28px;
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .landing-actions {
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .landing-btn {
+        padding: 14px 22px;
+        font-size: 1rem;
+    }
+
+    .landing-content {
+        padding: 100px 28px 40px;
+    }
+
+        .landing-content p {
+            font-size: 1.2rem;
+        }
+}
+
