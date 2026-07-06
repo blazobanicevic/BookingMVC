@@ -1863,14 +1863,20 @@ body {
     gap: 14px;
 }
 
-    .calendar-navigation a {
+    .calendar-navigation button {
         background: #eef4ff;
         color: #0b47c2;
+        border: none;
         text-decoration: none;
         padding: 9px 13px;
         border-radius: 10px;
         font-weight: 700;
+        cursor: pointer;
     }
+
+        .calendar-navigation button:hover {
+            background: #dce8ff;
+        }
 
         .calendar-navigation a:hover {
             background: #dce8ff;
@@ -1983,6 +1989,252 @@ body {
     .reservations-hero {
         flex-direction: column;
         align-items: flex-start;
+    }
+}
+
+/* PLACE CREATE / EDIT FORM */
+
+.place-form-page {
+    padding: 30px 0 60px;
+}
+
+.place-form-card {
+    background: white;
+    border: 1px solid #dbe5f5;
+    border-radius: 22px;
+    padding: 35px;
+    box-shadow: 0 12px 30px rgba(11, 71, 194, 0.08);
+}
+
+.place-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.place-field {
+    display: flex;
+    flex-direction: column;
+}
+
+    .place-field.full {
+        grid-column: span 2;
+    }
+
+    .place-field label {
+        color: #333;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .place-field input,
+    .place-field select,
+    .place-field textarea {
+        border: 1px solid #cfd6e4;
+        border-radius: 11px;
+        padding: 12px 14px;
+        font-size: 15px;
+    }
+
+    .place-field input,
+    .place-field select {
+        height: 46px;
+    }
+
+    .place-field textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+        .place-field input:focus,
+        .place-field select:focus,
+        .place-field textarea:focus {
+            outline: none;
+            border-color: #0b47c2;
+            box-shadow: 0 0 8px rgba(11, 71, 194, 0.22);
+        }
+
+.place-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 30px;
+}
+
+    .place-form-actions button {
+        background: #0b47c2;
+        color: white;
+        border: none;
+        border-radius: 11px;
+        padding: 13px 22px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+        .place-form-actions button:hover {
+            background: #062b8f;
+        }
+
+    .place-form-actions a {
+        color: #0b47c2;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .place-form-actions a:hover {
+            text-decoration: underline;
+        }
+
+@media (max-width: 768px) {
+    .place-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .place-field.full {
+        grid-column: span 1;
+    }
+
+    .place-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .place-form-actions button,
+        .place-form-actions a {
+            width: 100%;
+            text-align: center;
+        }
+}
+
+/* EDIT ACTIVE CHECKBOX */
+
+.checkbox-field {
+    justify-content: flex-end;
+}
+
+.active-checkbox {
+    height: 46px;
+    border: 1px solid #cfd6e4;
+    border-radius: 11px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    background: #f4f8ff;
+}
+
+    .active-checkbox input {
+        width: 18px;
+        height: 18px;
+        accent-color: #0b47c2;
+    }
+
+    .active-checkbox span {
+        color: #333;
+        font-weight: 700;
+    }
+
+/* PLACES PAGE */
+
+.place-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 25px;
+}
+
+.place-add-btn {
+    background: #0b47c2;
+    color: white;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: .25s;
+}
+
+    .place-add-btn:hover {
+        background: #08389c;
+        color: white;
+    }
+
+.place-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.place-status {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+    .place-status.active {
+        background: #d1e7dd;
+        color: #146c43;
+    }
+
+    .place-status.inactive {
+        background: #f8d7da;
+        color: #b02a37;
+    }
+
+.place-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.edit-btn {
+    background: #ffc107;
+    color: #212529;
+}
+
+    .edit-btn:hover {
+        background: #e0a800;
+        color: #212529;
+    }
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+}
+
+    .delete-btn:hover {
+        background: #bb2d3b;
+        color: white;
+    }
+
+@media (max-width: 768px) {
+
+    .place-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .place-toolbar {
+        justify-content: center;
+    }
+
+    .place-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        text-align: center;
     }
 }
 

@@ -1,57 +1,86 @@
 ﻿@model BookingMVC.Models.Smjestaj
 
 @{
-    ViewData["Title"] = "Izmjeni smještaj";
+    ViewData["Title"] = "Izmijeni smještaj";
 }
 
-<h2>Izmjeni smještaj</h2>
+<div class="place-form-page">
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="IdSmjestaj" />
-    <div>
-        <label>Naziv</label>
-        <input asp-for="Naziv" />
+    <div class="results-hero">
+        <h1>Izmijeni smještaj</h1>
+        <p>Ažuriraj podatke o postojećem smještaju.</p>
     </div>
 
-    <div>
-        <label>Opis</label>
-        <textarea asp-for="Opis"></textarea>
+    <div class="place-form-card">
+
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="IdSmjestaj" />
+
+            <div class="place-form-grid">
+
+                <div class="place-field">
+                    <label>Naziv</label>
+                    <input asp-for="Naziv" placeholder="Naziv smještaja" />
+                </div>
+
+                <div class="place-field">
+                    <label>Grad</label>
+                    <input type="text" name="gradNaziv" value="@Model.Grad.Naziv" placeholder="Grad" />
+                </div>
+
+                <div class="place-field full">
+                    <label>Opis</label>
+                    <textarea asp-for="Opis" placeholder="Opis smještaja..."></textarea>
+                </div>
+
+                <div class="place-field">
+                    <label>Adresa</label>
+                    <input asp-for="Adresa" placeholder="Adresa" />
+                </div>
+
+                <div class="place-field">
+                    <label>Tip smještaja</label>
+                    <select asp-for="IdTip">
+                        @foreach (var tip in ViewBag.Tipovi)
+                        {
+                            <option value="@tip.IdTipSmjestaja">@tip.Naziv</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="place-field">
+                    <label>Broj osoba</label>
+                    <input asp-for="BrojOsoba" type="number" min="1" />
+                </div>
+
+                <div class="place-field">
+                    <label>Cijena po noći</label>
+                    <input asp-for="CijenaPoNoci" type="number" step="0.01" min="0" />
+                </div>
+
+                <div class="place-field checkbox-field">
+                    <label>Status smještaja</label>
+
+                    <label class="active-checkbox">
+                        <input asp-for="Aktivan" type="checkbox" />
+                        <span>Aktivan</span>
+                    </label>
+                </div>
+
+            </div>
+
+            <div class="place-form-actions">
+                <button type="submit">
+                    Sačuvaj izmjene
+                </button>
+
+                <a asp-controller="Smjestaj" asp-action="Index">
+                    Nazad na smještaje
+                </a>
+            </div>
+
+        </form>
+
     </div>
 
-    <div>
-        <label>Adresa</label>
-        <input asp-for="Adresa" />
-    </div>
-
-    <div>
-        <label>Broj osoba</label>
-        <input asp-for="BrojOsoba" type="number" />
-    </div>
-
-    <div>
-        <label>Cijena po noći</label>
-        <input asp-for="CijenaPoNoci" type="number" step="0.01" />
-    </div>
-
-    <div>
-        <label>Grad</label>
-        <input type="text" name="gradNaziv" value="@Model.Grad.Naziv" />
-    </div>
-
-    <div>
-        <label>Tip smještaja</label>
-        <select asp-for="IdTip">
-            @foreach (var tip in ViewBag.Tipovi)
-            {
-                <option value="@tip.IdTipSmjestaja">@tip.Naziv</option>
-            }
-        </select>
-    </div>
-
-    <div>
-        <label>Aktivan</label>
-        <input asp-for="Aktivan" type="checkbox" />
-    </div>
-
-    <button type="submit" class="btn btn-success">Sačuvaj</button>
-</form>
+</div>

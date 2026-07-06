@@ -1,0 +1,96 @@
+﻿@{
+    var smjestajiAdmina = ViewBag.SmjestajiAdmina as List<BookingMVC.Models.Smjestaj>;
+    var zauzetiTermini = ViewBag.ZauzetiTermini as List<BookingMVC.Models.Rezervacija>;
+
+    int mjesec = ViewBag.Mjesec;
+    int godina = ViewBag.Godina;
+    int daniUMjesecu = ViewBag.DaniUMjesecu;
+
+    var prethodniMjesec = mjesec == 1 ? 12 : mjesec - 1;
+    var prethodnaGodina = mjesec == 1 ? godina - 1 : godina;
+
+    var sljedeciMjesec = mjesec == 12 ? 1 : mjesec + 1;
+    var sljedecaGodina = mjesec == 12 ? godina + 1 : godina;
+}
+
+<div class="calendar-header-box">
+    <div>
+        <h2>Kalendar dostupnosti smještaja</h2>
+        <p>Pregled zauzetih termina po smještajima.</p>
+    </div>
+
+    <div class="calendar-navigation">
+        <button type="button"
+                onclick="loadAdminCalendar(@prethodniMjesec, @prethodnaGodina)">
+            ← Prethodni
+        </button>
+
+        <strong>
+            @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mjesec).ToUpper()
+            @godina
+        </strong>
+
+        <button type="button"
+                onclick="loadAdminCalendar(@sljedeciMjesec, @sljedecaGodina)">
+            Sljedeći →
+        </button>
+    </div>
+</div>
+
+<div class="calendar-table-wrapper">
+    <table class="table availability-calendar">
+        <thead>
+            <tr>
+                <th>Smještaj</th>
+
+                @for (int dan = 1; dan <= daniUMjesecu; dan++)
+                {
+                    <th>@dan</th>
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var smjestaj in smjestajiAdmina)
+            {
+                <tr>
+                    <td class="calendar-place">
+                        <strong>@smjestaj.Naziv</strong>
+                        <small>@smjestaj.Grad.Naziv</small>
+                    </td>
+
+                    @for (int dan = 1; dan <= daniUMjesecu; dan++)
+                    {
+                        var datum = new DateTime(godina, mjesec, dan);
+
+                        var rezervacijaDana = zauzetiTermini.FirstOrDefault(r =>
+                        r.IdSmjestaj == smjestaj.IdSmjestaj &&
+                        datum >= r.DatumPrijave.Date &&
+                        datum < r.DatumOdjave.Date);
+
+                        string cssKlasa = "";
+
+                        if (rezervacijaDana != null)
+                        {
+                            if (rezervacijaDana.IdStatus == 1)
+                            {
+                                cssKlasa = "pending-day";
+                            }
+                            else if (rezervacijaDana.IdStatus == 2)
+                            {
+                                cssKlasa = "confirmed-day";
+                            }
+                        }
+
+                        <td class="@cssKlasa"></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="calendar-legend">
+    <span class="legend-box pending-day"></span> Na čekanju
+    <span class="legend-box confirmed-day"></span> Potvrđeno
+</div>

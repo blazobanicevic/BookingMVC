@@ -288,5 +288,41 @@ namespace BookingMVC.Controllers
 
             return Json(dani);
         }
+
+        [HttpGet]
+        public IActionResult AvailabilityCalendarPartial(int mjesec, int godina)
+        {
+            if (HttpContext.Session.GetString("Uloga") != "Admin")
+            {
+                return Unauthorized();
+            }
+
+            int idAdmin = HttpContext.Session.GetInt32("IdKorisnik").Value;
+
+            var smjestajiAdmina = _context.Smjestaji
+                .Include(s => s.Grad)
+                .Where(s => s.IdAdmin == idAdmin)
+                .ToList();
+
+            var prviDan = new DateTime(godina, mjesec, 1);
+            var zadnjiDan = prviDan.AddMonths(1);
+
+            var zauzetiTermini = _context.Rezervacije
+                .Include(r => r.Smjestaj)
+                .Where(r =>
+                    r.Smjestaj.IdAdmin == idAdmin &&
+                    r.DatumPrijave < zadnjiDan &&
+                    r.DatumOdjave > prviDan &&
+                    (r.IdStatus == 1 || r.IdStatus == 2))
+                .ToList();
+
+            ViewBag.SmjestajiAdmina = smjestajiAdmina;
+            ViewBag.ZauzetiTermini = zauzetiTermini;
+            ViewBag.Mjesec = mjesec;
+            ViewBag.Godina = godina;
+            ViewBag.DaniUMjesecu = DateTime.DaysInMonth(godina, mjesec);
+
+            return PartialView("_AvailabilityCalendar");
+        }
     }
 }
